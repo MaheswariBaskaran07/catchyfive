@@ -1,7 +1,10 @@
 import type { RouteObject } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
+ 
 import Signup from './pages/Signup';
+
+import WishlistPage from './pages/WishlistPage';
 import NotFound from './pages/NotFound';
 
 const routes: RouteObject[] = [
@@ -18,7 +21,12 @@ const routes: RouteObject[] = [
     path: '/signup',
     element: <Signup /> 
   },
-
+ 
+  {
+    path: '/wishlist',      
+    element: <WishlistPage />,
+  },
+  
   {
     path: '*',
     element: <NotFound />

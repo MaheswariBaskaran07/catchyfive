@@ -1,56 +1,107 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type CartContextType = {
-  cartItems: number;
-  wishlistItems: number;
+// Types
+export interface Product {
+  id: number;
+  name: string;
+  img: string;
+  price: number;
+  quantity?: number;
+}
+
+// Context Types
+interface CartContextType {
+  cart: Product[];
+  wishlist: Product[];
+  cartItemCount: number;
+  wishlistItemCount: number;
   cartTotal: number;
-  addToCart: (amount: number) => void;
-  addToWishlist: () => void;
-  resetCart: () => void;
-};
+  addToCart: (item: Product) => void;
+  addToWishlist: (item: Product) => void;
+  removeFromCart: (id: number) => void;
+  removeFromWishlist: (id: number) => void;
+  setWishlist: React.Dispatch<React.SetStateAction<Product[]>>;
+}
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState(0);
-  const [wishlistItems, setWishlistItems] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
+export const useCartContext = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCartContext must be used inside CartProvider');
+  }
+  return context;
+};
 
-  const addToCart = (amount: number) => {
-    setCartItems(prev => prev + 1);
-    setCartTotal(prev => prev + amount);
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [cart, setCart] = useState<Product[]>([]);
+  const [wishlist, setWishlist] = useState<Product[]>([]);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    const savedWishlist = localStorage.getItem('wishlist');
+    if (savedCart) setCart(JSON.parse(savedCart));
+    if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
+  }, []);
+
+  // Save to localStorage on changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+  }, [cart, wishlist]);
+
+  const addToCart = (item: Product) => {
+    setCart((prev) => {
+      const existing = prev.find((p) => p.id === item.id);
+      if (existing) {
+        return prev.map((p) =>
+          p.id === item.id ? { ...p, quantity: (p.quantity || 1) + 1 } : p
+        );
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
   };
 
-  const addToWishlist = () => {
-    setWishlistItems(prev => prev + 1);
+  const addToWishlist = (item: Product) => {
+    setWishlist((prev) => {
+      const exists = prev.find((p) => p.id === item.id);
+      if (exists) return prev;
+      return [...prev, item];
+    });
   };
 
-  const resetCart = () => {
-    setCartItems(0);
-    setWishlistItems(0);
-    setCartTotal(0);
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((p) => p.id !== id));
   };
+
+  const removeFromWishlist = (id: number) => {
+    setWishlist((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const cartItemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const wishlistItemCount = wishlist.length;
+  const cartTotal = cart.reduce(
+    (sum, item) => sum + item.price * (item.quantity || 1),
+    0
+  );
 
   return (
     <CartContext.Provider
       value={{
-        cartItems,
-        wishlistItems,
+        cart,
+        wishlist,
+        cartItemCount,
+        wishlistItemCount,
         cartTotal,
         addToCart,
         addToWishlist,
-        resetCart,
+        removeFromCart,
+        removeFromWishlist,
+         setWishlist,
       }}
     >
       {children}
     </CartContext.Provider>
   );
-};
-
-export const useCartContext = (): CartContextType => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCartContext must be used within a CartProvider');
-  }
-  return context;
 };
