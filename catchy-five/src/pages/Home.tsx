@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -6,17 +6,27 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Container,
   TextField,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Link as MuiLink,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useCartContext } from '../components/CartContext';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import SearchIcon from '@mui/icons-material/Search';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
 
 export default function HomePage() {
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const { addToCart, addToWishlist } = useCartContext();
 
   const categories = [
     { id: 1, title: 'Fruits & Veggies', img: '/fruits.jpg' },
@@ -32,11 +42,7 @@ export default function HomePage() {
     { id: 11, title: 'Pet Supplies', img: '/pet.jpg' },
     { id: 12, title: 'International Foods', img: '/international.jpg' },
   ];
-  const testimonials = [
-    { id: 1, name: 'Anjali', review: 'Amazing service & fresh produce every time.' },
-    { id: 2, name: 'Rahul', review: 'Easy ordering and quick delivery.' },
-    { id: 3, name: 'Sheela', review: 'Best local organic grocery source!' },
-  ];
+
   const frequentlyBought = [
     { id: 1, name: 'Tomatoes (1kg)', img: '/tomatoes.jpg', price: 30 },
     { id: 2, name: 'Amul Milk 1L', img: '/milk.jpg', price: 60 },
@@ -45,11 +51,34 @@ export default function HomePage() {
     { id: 5, name: 'Sunflower Oil 1L', img: '/oil.jpg', price: 110 },
     { id: 6, name: 'Parle-G Biscuits', img: '/biscuits.jpg', price: 10 },
   ];
-  const { addToCart, addToWishlist } = useCartContext();
+
+  const testimonials = [
+    { quote: 'Amazing service & fresh produce every time.', author: 'Anjali' },
+    { quote: 'Easy ordering and quick delivery.', author: 'Rahul' },
+    { quote: 'Best local organic grocery source!', author: 'Sheela' },
+  ];
+
+  const steps = [
+    {
+      icon: <SearchIcon fontSize="large" sx={{ color: theme.palette.primary.main }} />,
+      title: 'Browse Products',
+      description: 'Explore our wide range of fresh groceries and essentials.',
+    },
+    {
+      icon: <ShoppingCartIcon fontSize="large" sx={{ color: theme.palette.primary.main }} />,
+      title: 'Add to Cart',
+      description: 'Select your favorites and add them to your cart easily.',
+    },
+    {
+      icon: <LocalShippingIcon fontSize="large" sx={{ color: theme.palette.primary.main }} />,
+      title: 'Fast Delivery',
+      description: 'Get your order delivered swiftly to your doorstep.',
+    },
+  ];
 
   return (
-    <Box sx={{ bgcolor: theme.palette.background.default, fontFamily: theme.typography.fontFamily }}>
-      {/* Hero */}
+    <Box sx={{ bgcolor: theme.palette.background.default }}>
+      {/* HERO */}
       <Box
         sx={{
           background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.success.main})`,
@@ -84,217 +113,234 @@ export default function HomePage() {
         </Button>
       </Box>
 
-      {/* Categories */}
-      <Container sx={{ py: { xs: 4, md: 6 } }}>
-        <Typography variant="h4" fontWeight={600} mb={4} textAlign="center">
-          Explore Categories
-        </Typography>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2,1fr)',
-              md: 'repeat(4,1fr)',
-            },
-            gap: 3,
-          }}
-        >
-          {categories.map((cat) => (
-            <Card
-              key={cat.id}
-              sx={{
-                cursor: 'pointer',
-                transition: 'transform .2s',
-                '&:hover': { transform: 'scale(1.03)' },
-              }}
-            >
-              <CardMedia component="img" height="160" image={cat.img} alt={cat.title} />
-              <CardContent>
-                <Typography variant="h6" fontWeight={500} textAlign="center">
-                  {cat.title}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
+      {/* CATEGORIES */}
+      <div className="container py-5">
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography variant="h4" fontWeight={600}>
+            Explore Categories
+          </Typography>
+          <Button
+            onClick={() => setShowAllCategories(!showAllCategories)}
+            endIcon={showAllCategories ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            sx={{
+              textTransform: 'none',
+              fontWeight: 600,
+              color: '#4CAF50',
+              border: '1px solid #C8E6C9',
+              px: 2,
+              py: 0.5,
+              borderRadius: 2,
+              backgroundColor: '#f1f8e9',
+              '&:hover': { bgcolor: '#dcedc8' },
+            }}
+          >
+            {showAllCategories ? 'Show Less' : 'View All Categories'}
+          </Button>
         </Box>
-      </Container>
+        <div className="row gy-4">
+          {(showAllCategories ? categories : categories.slice(0, 3)).map((cat) => (
+            <div key={cat.id} className="col-12 col-sm-6 col-md-4">
+              <Card sx={{ cursor: 'pointer', height: '100%', '&:hover': { transform: 'scale(1.03)' }, transition: 'transform .2s' }}>
+                <CardMedia component="img" height="160" image={cat.img} alt={cat.title} />
+                <CardContent>
+                  <Typography variant="h6" fontWeight={500} textAlign="center">
+                    {cat.title}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* Frequently Bought */}
-      <Container sx={{ py: { xs: 4, md: 6 } }}>
+      {/* FREQUENTLY BOUGHT */}
+      <div className="container py-5">
         <Typography variant="h4" fontWeight={600} mb={4} textAlign="center">
           Frequently Bought
         </Typography>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2,1fr)',
-              md: 'repeat(4,1fr)',
-            },
-            gap: 3,
-          }}
-        >
+        <div className="row gy-4">
           {frequentlyBought.map((item) => (
-            <Card
-              key={item.id}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'transform .2s',
-                '&:hover': { transform: 'scale(1.02)' },
-              }}
-            >
-              <CardMedia component="img" height="140" image={item.img} alt={item.name} />
-              <CardContent sx={{ flex: '1 0 auto' }}>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {item.name}
-                </Typography>
-                <Typography color="textSecondary" mb={2}>
-                  ₹{item.price}
-                </Typography>
-                <Box display="flex" gap={1}>
-                  <Button
-                    onClick={() => addToCart(item)}
-                    variant="contained"
-                    size="small"
-                    fullWidth
-                    sx={{ textTransform: 'none', fontWeight: 600 }}
-                  >
-                    Add to Cart
-                  </Button>
-                  <Button
-                    onClick={() => addToWishlist(item)}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    sx={{
-                      textTransform: 'none',
-                      borderColor: theme.palette.primary.main,
-                      color: theme.palette.primary.main,
-                      '&:hover': {
-                        background: theme.palette.primary.light + '20',
-                        borderColor: theme.palette.primary.main,
-                      },
-                      fontWeight: 600,
-                    }}
-                  >
-                    ❤️ Wishlist
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
+            <div key={item.id} className="col-12 col-sm-6 col-md-4">
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  transition: 'transform .2s',
+                  '&:hover': { transform: 'scale(1.02)' },
+                }}
+              >
+                <CardMedia component="img" height="140" image={item.img} alt={item.name} />
+                <CardContent>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {item.name}
+                  </Typography>
+                  <Typography color="textSecondary" mb={2}>
+                    ₹{item.price}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
+                    <Button
+                      onClick={() => addToCart(item)}
+                      variant="contained"
+                      fullWidth
+                      sx={{ backgroundColor: '#4CAF50', fontWeight: 600, '&:hover': { backgroundColor: '#388e3c' } }}
+                      startIcon={<ShoppingCartIcon sx={{ color: 'white' }} />}
+                    >
+                      Add to Cart
+                    </Button>
+                    <Button
+                      onClick={() => addToWishlist(item)}
+                      variant="outlined"
+                      fullWidth
+                      sx={{
+                        borderColor: '#4CAF50',
+                        color: '#4CAF50',
+                        fontWeight: 600,
+                        '&:hover': { bgcolor: '#e8f5e9', borderColor: '#388e3c', color: '#2e7d32' },
+                      }}
+                    >
+                      ❤️ Wishlist
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </div>
           ))}
-        </Box>
-      </Container>
+        </div>
+      </div>
 
-      {/* How It Works */}
-      <Box sx={{ py: { xs: 4, md: 6 }, bgcolor: theme.palette.success.light }}>
-        <Container>
-          <Typography variant="h4" fontWeight={600} mb={4} textAlign="center">
-            How It Works
+      {/* TESTIMONIALS */}
+      <Box sx={{ bgcolor: '#f9f9f9', py: 6 }}>
+        <div className="container">
+          <Typography variant="h4" fontWeight={700} textAlign="center" mb={5}>
+            What Our Customers Say
           </Typography>
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'center', gap: 3 }}>
-            {[
-              { step: '1', title: 'Browse Products', description: 'Explore categories & add to cart.' },
-              { step: '2', title: 'Secure Checkout', description: 'Easy payment & confirmation.' },
-              { step: '3', title: 'Fast Delivery', description: 'Order delivered in 1–2 hours.' },
-            ].map((item) => (
-              <Box key={item.step} sx={{ textAlign: 'center', flex: 1, px: 2 }}>
-                <Typography variant="h3" fontWeight={700} color="primary.main">
-                  {item.step}
-                </Typography>
-                <Typography variant="h6" fontWeight={600} mt={1} mb={1}>
-                  {item.title}
-                </Typography>
-                <Typography color="textSecondary">{item.description}</Typography>
-              </Box>
+          <div className="row">
+            {testimonials.map((t, i) => (
+              <div key={i} className="col-12 col-md-4 mb-4">
+                <Box sx={{ bgcolor: 'white', boxShadow: 1, borderRadius: 2, p: 3, minHeight: 150, textAlign: 'center' }}>
+                  <Typography variant="body1" mb={2}>
+                    "{t.quote}"
+                  </Typography>
+                  <Typography variant="subtitle2" fontWeight={700}>
+                    — {t.author}
+                  </Typography>
+                </Box>
+              </div>
             ))}
-          </Box>
-        </Container>
+          </div>
+        </div>
       </Box>
 
-      {/* Testimonials */}
-      <Container sx={{ py: { xs: 4, md: 6 } }}>
-        <Typography variant="h4" fontWeight={600} mb={4} textAlign="center">
-          What Our Customers Say
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3,1fr)' }, gap: 3 }}>
-          {testimonials.map((t) => (
-            <Card key={t.id} sx={{ p: 3, textAlign: 'center', bgcolor: theme.palette.background.paper }}>
-              <Typography variant="body1" mb={2}>
-                "{t.review}"
-              </Typography>
-              <Typography fontWeight={600}>— {t.name}</Typography>
-            </Card>
-          ))}
-        </Box>
-      </Container>
+      {/* HOW IT WORKS */}
+      <Box sx={{ bgcolor: '#f5f5f5', py: 6 }}>
+        <div className="container">
+          <Typography variant="h4" fontWeight={700} textAlign="center" mb={5}>
+            How It Works
+          </Typography>
+          <div className="row">
+            {steps.map((step, index) => (
+              <div key={index} className="col-12 col-md-4 mb-4 d-flex justify-content-center">
+                <Box sx={{ bgcolor: 'white', borderRadius: 4, boxShadow: 3, p: 4, textAlign: 'center', maxWidth: 320, width: '100%' }}>
+                  {step.icon}
+                  <Typography variant="h6" fontWeight={600} mt={2}>
+                    {step.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {step.description}
+                  </Typography>
+                </Box>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Box>
 
-      {/* Footer */}
-      <Box sx={{ bgcolor: theme.palette.primary.dark, color: 'white', py: { xs: 4, md: 6 } }}>
-        <Container>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: 3,
-            }}
-          >
-            <Box flex={1}>
-              <Typography variant="h6" fontWeight={600} mb={1}>
+      {/* FOOTER */}
+      <Box sx={{ bgcolor: theme.palette.primary.main, color: 'white', py: 5 }}>
+        <div className="container">
+          <div className="row">
+            <div className="col-12 col-md-4 mb-4">
+              <Typography variant="h6" fontWeight={700}>
                 CatchyFive
               </Typography>
-              <Typography>Organic groceries delivered fresh.</Typography>
-            </Box>
-            <Box flex="none">
-              <Typography fontWeight={600}>Links</Typography>
-              {['Home', 'About', 'Contact', 'Privacy'].map((link) => (
-                <Typography
-                  key={link}
-                  component={Link}
-                  to={`/${link.toLowerCase()}`}
-                  sx={{
-                    color: 'white',
-                    textDecoration: 'none',
-                    mt: 0.5,
-                    display: 'block'
-                  }}
-                >
-                  {link}
-                </Typography>
-              ))}
-            </Box>
-            <Box flex="none">
-              <Typography fontWeight={600}>Follow Us</Typography>
-              {['Instagram', 'Facebook', 'Twitter'].map((s) => (
-                <Typography key={s} sx={{ mt: 0.5 }}>
-                  {s}
-                </Typography>
-              ))}
-            </Box>
-            <Box flex={1}>
-              <Typography fontWeight={600}>Subscribe to Newsletter</Typography>
-              <Box component="form" mt={1} sx={{ display: 'flex', gap: 1 }}>
-                <TextField
-                  placeholder="Your email"
-                  variant="filled"
-                  size="small"
-                  sx={{
-                    bgcolor: 'white',
-                    borderRadius: 1,
-                    flex: 1,
-                  }}
-                />
-                <Button variant="contained" color="secondary" sx={{ textTransform: 'none', fontWeight: 600 }}>
-                  Subscribe
-                </Button>
+              <Typography variant="body2" sx={{ maxWidth: 300 }}>
+                Your trusted partner for fresh groceries delivered directly to your door. Quality and freshness guaranteed.
+              </Typography>
+            </div>
+            <div className="col-6 col-md-2 mb-4">
+              <Typography variant="subtitle1" fontWeight={600}>
+                Quick Links
+              </Typography>
+              <ul style={{ listStyle: 'none', paddingLeft: 0, lineHeight: '2' }}>
+                <li>
+                  <MuiLink href="/about" color="inherit" underline="hover">
+                    About Us
+                  </MuiLink>
+                </li>
+                <li>
+                  <MuiLink href="/contact" color="inherit" underline="hover">
+                    Contact
+                  </MuiLink>
+                </li>
+                <li>
+                  <MuiLink href="/privacy" color="inherit" underline="hover">
+                    Privacy Policy
+                  </MuiLink>
+                </li>
+                <li>
+                  <MuiLink href="/terms" color="inherit" underline="hover">
+                    Terms
+                  </MuiLink>
+                </li>
+              </ul>
+            </div>
+            <div className="col-6 col-md-3 mb-4">
+              <Typography variant="subtitle1" fontWeight={600}>
+                Follow Us
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <MuiLink href="#" color="inherit">
+                  <FacebookIcon />
+                </MuiLink>
+                <MuiLink href="#" color="inherit">
+                  <TwitterIcon />
+                </MuiLink>
+                <MuiLink href="#" color="inherit">
+                  <InstagramIcon />
+                </MuiLink>
               </Box>
-            </Box>
-          </Box>
-        </Container>
+            </div>
+            <div className="col-12 col-md-3 mb-4">
+              <Typography variant="subtitle1" fontWeight={600}>
+                Subscribe
+              </Typography>
+              <TextField
+                fullWidth
+                variant="filled"
+                placeholder="Your email"
+                sx={{
+                  bgcolor: 'white',
+                  borderRadius: 1,
+                  mb: 1,
+                  input: { padding: 1 },
+                }}
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ bgcolor: 'white', color: theme.palette.primary.main, textTransform: 'none' }}
+              >
+                Subscribe
+              </Button>
+            </div>
+          </div>
+          <hr style={{ borderColor: 'rgba(255,255,255,0.3)' }} />
+          <Typography variant="body2" textAlign="center" mt={3} color="rgba(255,255,255,0.7)">
+            © {new Date().getFullYear()} CatchyFive. All rights reserved.
+          </Typography>
+        </div>
       </Box>
     </Box>
   );
