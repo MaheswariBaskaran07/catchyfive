@@ -1,281 +1,205 @@
+import { useState } from 'react';
 import {
   Box,
   Button,
   TextField,
   Typography,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Paper,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
 } from '@mui/material';
+import {
+  Email,
+  Lock,
+  Visibility,
+  VisibilityOff,
+  } from '@mui/icons-material';
+import SpaIcon from '@mui/icons-material/Spa'; 
+
 import { Link, useNavigate } from 'react-router-dom';
 import groceriesImg from '../assets/groceries.jpg';
-import { useState } from 'react';
-
-
-const fontLink = document.createElement('link');
-fontLink.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap';
-fontLink.rel = 'stylesheet';
-document.head.appendChild(fontLink);
 
 export default function Login() {
-  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
-    if (email && password) {
+    if (!email || !password) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
       navigate('/');
-    }
-  };
-
-  const handleSignUp = () => {
-    navigate('/signup');
+    }, 1000);
   };
 
   return (
     <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
       sx={{
-        background: 'linear-gradient(135deg, #e0f0ff, #a0c4ff)',
-        fontFamily: "'Poppins', sans-serif",
+        minHeight: '90vh',
+        bgcolor: '#f9f9f9',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
         px: 2,
-        animation: 'fadeIn 1.2s ease-in-out',
-        '@keyframes fadeIn': {
-          from: { opacity: 0 },
-          to: { opacity: 1 }
-        }
       }}
     >
       <Box
-        display="flex"
-        flexDirection={{ xs: 'column', md: 'row' }}
-        bgcolor="rgba(0, 0, 0, 0.72)"
-        borderRadius={3}
-        p={{ xs: 2, md: 3 }}
-        width="100%"
-        maxWidth="700px"
-        boxShadow={6}
-        gap={3}
         sx={{
-          transform: 'translateY(0)',
-          transition: 'transform 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-3px)',
-          }
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: 180,
+          height: 180,
+          backgroundImage: "url('/assets/leaves-top-right.svg')",
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.07,
+          zIndex: 0,
+        }}
+      />
+
+      <Paper
+        elevation={3}
+        sx={{
+          position: 'relative',
+          zIndex: 1,
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          width: '100%',
+          maxWidth: 900,
+          borderRadius: 4,
+          overflow: 'hidden',
+          animation: 'fadeInUp 0.6s ease-in-out',
+          '@keyframes fadeInUp': {
+            '0%': { opacity: 0, transform: 'translateY(20px)' },
+            '100%': { opacity: 1, transform: 'translateY(0)' },
+          },
         }}
       >
-        {/* Left: Image */}
+        {/* Left image */}
         <Box
           flex={1}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          mb={{ xs: 2, md: 0 }}
+          sx={{
+            display: { xs: 'none', md: 'flex' },
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: '#e8f5e9',
+            p: 3,
+          }}
         >
           <img
             src={groceriesImg}
             alt="Groceries"
             style={{
               width: '100%',
-              maxWidth: isMobile ? '180px' : '220px',
-              borderRadius: '10px',
+              maxWidth: 260,
+              height: isMobile ? 180 : 260,
+              borderRadius: 12,
               objectFit: 'cover',
-              boxShadow: '0 3px 15px rgba(0,0,0,0.35)'
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              transition: 'transform 0.3s',
             }}
           />
         </Box>
 
-        {/* Right: Form */}
-        <Box flex={2} color="white">
-          <Typography
-            variant="h4"
-            fontWeight={700}
-            mb={1}
-            sx={{
-              color: '#00FFB3',
-              textShadow: '1px 1px 4px black',
-              fontSize: { xs: '1.6rem', md: '2rem' }
-            }}
-          >
-            Catchy<span style={{ color: '#ffffff' }}>Five</span>
+        {/* Right side form */}
+        <Box flex={1.2} p={{ xs: 3, md: 4 }} display="flex" flexDirection="column" gap={2}>
+          {/* 👇 Grocery Icon with Heading */}
+          <Box display="flex" alignItems="center" gap={1}>
+  <SpaIcon sx={{ fontSize: 32, color: '#4CAF50' }} />
+  <Typography variant="h4" color="#4CAF50" fontWeight={700}>
+    Welcome Back
+  </Typography>
+</Box>
+
+
+          <Typography variant="body1" color="text.secondary">
+            Login to your CatchyFive account to start shopping fresh!
           </Typography>
 
-          <Typography variant="h6" mb={1} sx={{ fontWeight: 500 }}>
-            Welcome Back!
-          </Typography>
-
-          <Typography variant="body2" mb={2} sx={{ fontSize: '0.9rem' }}>
-            Don’t have an account?{' '}
-            <Link
-              to="/signup"
-              style={{
-                color: '#00c6ff',
-                textDecoration: 'underline',
-                fontWeight: 600
-              }}
-            >
-              Create Account
-            </Link>
-          </Typography>
-
-          <Typography
-            variant="subtitle1"
-            mb={1.5}
-            sx={{
-              color: '#ffffff',
-              fontWeight: 600,
-              textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
-            }}
-          >
-            Login
-          </Typography>
-
-          {/* Email Field */}
           <TextField
             fullWidth
             label="Email Address"
-            margin="dense"
             variant="outlined"
+            size="medium"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-              sx: {
-                color: 'white',
-                fontSize: '0.85rem',
-                '&.Mui-focused': {
-                  color: '#2bbee7ff',
-                },
-              },
-            }}
             InputProps={{
-              sx: {
-                color: 'white',
-                backgroundColor: 'rgba(255,255,255,0.07)',
-                fontSize: '0.9rem',
-              },
-            }}
-            sx={{
-              mb: 1.5,
-              '& .MuiOutlinedInput-root': {
-                '& input': {
-                  paddingTop: '18px',
-                },
-                '& fieldset': {
-                  borderColor: '#bbb',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#00c6ff',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#00c6ff',
-                },
-              },
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Email color="action" />
+                </InputAdornment>
+              ),
             }}
           />
 
-          {/* Password Field */}
           <TextField
             fullWidth
             label="Password"
-            type="password"
-            margin="dense"
             variant="outlined"
+            type={showPassword ? 'text' : 'password'}
+            size="medium"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-              sx: {
-                color: 'white',
-                fontSize: '0.85rem',
-                '&.Mui-focused': {
-                  color: '#28c8f0ff',
-                },
-              },
-            }}
             InputProps={{
-              sx: {
-                color: 'white',
-                backgroundColor: 'rgba(255,255,255,0.07)',
-                fontSize: '0.9rem',
-              },
-            }}
-            sx={{
-              mb: 2,
-              '& .MuiOutlinedInput-root': {
-                '& input': {
-                  paddingTop: '18px',
-                },
-                '& fieldset': {
-                  borderColor: 'whitesmoke',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#00c6ff',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#00c6ff',
-                },
-              },
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Lock color="action" />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword((s) => !s)} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
           />
 
-          <Typography variant="body2" color="white" mt={-1} mb={2} sx={{ fontSize: '0.9rem' }}>
+          <Box textAlign="right" mb={1}>
             <Link
               to="/forgot-password"
-              style={{ color: '#00c6ff', textDecoration: 'underline' }}
+              style={{ fontSize: 14, color: '#388e3c', textDecoration: 'underline' }}
             >
-              Forgot Password?
+              Forgot password?
             </Link>
-          </Typography>
+          </Box>
 
-          {/* Login Button */}
           <Button
             fullWidth
             variant="contained"
-            color="success"
             sx={{
-              py: 1.25,
+              py: 1.3,
               fontWeight: 'bold',
-              fontSize: '0.95rem',
-              textTransform: 'none',
-              background: 'linear-gradient(to right, #00b09b, #96c93d)',
-              '&:hover': {
-                background: 'linear-gradient(to right, #11998e, #38ef7d)'
-              }
+              fontSize: '1rem',
+              backgroundColor: '#4CAF50',
+              '&:hover': { backgroundColor: '#388e3c' },
             }}
             onClick={handleLogin}
+            disabled={loading}
           >
-            Login
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
 
-          {/* Sign Up Button */}
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={handleSignUp}
-            sx={{
-              mt: 1.75,
-              py: 1.25,
-              fontWeight: 'bold',
-              color: 'white',
-              borderColor: 'white',
-              textTransform: 'none',
-              fontSize: '0.95rem',
-              '&:hover': {
-                borderColor: '#00c6ff',
-                color: '#00c6ff',
-              }
-            }}
-          >
-            Sign Up
-          </Button>
+          <Typography variant="body2" color="text.secondary" textAlign="center">
+            Don’t have an account?{' '}
+            <Link to="/signup" style={{ color: '#4CAF50', fontWeight: 600 }}>
+              Sign Up
+            </Link>
+          </Typography>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 }

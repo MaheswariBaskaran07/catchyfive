@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { CartProvider } from './components/CartContext';
 import CartPage from './pages/CartPage';
+import AddAddress from './pages/AddAddress';
 import NotFound from './pages/NotFound';
 import WishlistPage from './pages/WishlistPage';
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} /> 
+        <Route path="/add-address" element={<AddAddress />} />
          <Route path="/cartpage"element={<CartPage />}/>
         <Route path="/wishlistpage"element={<WishlistPage />}/>
         <Route path="*" element={<NotFound />} />
