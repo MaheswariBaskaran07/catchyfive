@@ -28,39 +28,44 @@ export default function AddAddress() {
       alignItems="center"
       px={2}
       sx={{
-        background: 'linear-gradient(to right, #d4fc79, #96e6a1)',
+        background: 'linear-gradient(to right, #d4fc79, #3df355ff)',
         fontFamily: "'Poppins', sans-serif",
         position: 'relative',
         overflow: 'hidden',
       }}
     >
       {/* Optional decorative background icons */}
+      
+          <Box
+  component="img"
+  src="/grocery1.jpg"
+  alt="groceries"
+  sx={{
+    position: 'absolute',
+    top: { xs: 10, sm: 30 },
+    left: { xs: 10, sm: 30 },
+    width: { xs: 200, sm: 200 },
+    opacity: 0.9,
+    zIndex: 0,
+    margin:10,
+  }}
+/>
+
+      {/* 🧺 Bottom Right Decorative Image */}
       <Box
-        component="img"
-        src="/tree-left.png"
-        alt="Tree Left"
-        sx={{
-          position: 'absolute',
-          top: 24,
-          left: 24,
-          width: 70,
-          opacity: 0.08,
-          display: { xs: 'none', md: 'block' },
-        }}
-      />
-      <Box
-        component="img"
-        src="/veggies-right.png"
-        alt="Veggies Right"
-        sx={{
-          position: 'absolute',
-          bottom: 24,
-          right: 24,
-          width: 80,
-          opacity: 0.08,
-          display: { xs: 'none', md: 'block' },
-        }}
-      />
+  component="img"
+  src="/grocery2.jpg"
+  alt="groceries"
+  sx={{
+    position: 'absolute',
+    bottom: { xs: 10, sm: 30 },
+    right: { xs: 10, sm: 30 },
+    width: { xs: 200, sm: 200 },
+    opacity: 0.9,
+    zIndex: 0,
+    margin: 10,
+  }}
+/>
 
       {/* Card Container */}
       <Box
