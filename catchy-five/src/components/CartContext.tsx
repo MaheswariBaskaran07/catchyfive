@@ -21,6 +21,7 @@ interface CartContextType {
   removeFromCart: (id: number) => void;
   removeFromWishlist: (id: number) => void;
   setWishlist: React.Dispatch<React.SetStateAction<Product[]>>;
+  updateCartItemQuantity: (id: number, quantity: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -45,24 +46,37 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
   }, []);
 
-  // Save to localStorage on changes
+  // Save to localStorage on cart/wishlist change
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
   }, [cart, wishlist]);
 
+  // Add item to cart
   const addToCart = (item: Product) => {
     setCart((prev) => {
       const existing = prev.find((p) => p.id === item.id);
       if (existing) {
         return prev.map((p) =>
-          p.id === item.id ? { ...p, quantity: (p.quantity || 1) + 1 } : p
+          p.id === item.id ? { ...p, quantity: (p.quantity || 0) + 1 } : p
         );
       }
       return [...prev, { ...item, quantity: 1 }];
     });
   };
 
+  // Update quantity of cart item
+  const updateCartItemQuantity = (id: number, quantity: number) => {
+    setCart((prev) =>
+      prev
+        .map((item) =>
+          item.id === id ? { ...item, quantity } : item
+        )
+        .filter((item) => (item.quantity ?? 0) > 0) // Remove items with 0 qty
+    );
+  };
+
+  // Add to wishlist (no duplicates)
   const addToWishlist = (item: Product) => {
     setWishlist((prev) => {
       const exists = prev.find((p) => p.id === item.id);
@@ -71,20 +85,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  // Remove item from cart
   const removeFromCart = (id: number) => {
     setCart((prev) => prev.filter((p) => p.id !== id));
   };
 
+  // Remove item from wishlist
   const removeFromWishlist = (id: number) => {
     setWishlist((prev) => prev.filter((p) => p.id !== id));
   };
 
-  const cartItemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const cartItemCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
   const wishlistItemCount = wishlist.length;
-  const cartTotal = cart.reduce(
-    (sum, item) => sum + item.price * (item.quantity || 1),
-    0
-  );
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * (item.quantity || 0), 0);
 
   return (
     <CartContext.Provider
@@ -98,7 +111,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addToWishlist,
         removeFromCart,
         removeFromWishlist,
-         setWishlist,
+        setWishlist,
+        updateCartItemQuantity, // ✅ Newly added
       }}
     >
       {children}

@@ -1,3 +1,5 @@
+// pages/WishlistPage.tsx
+
 import { useCartContext } from '../components/CartContext';
 import {
   Box,
@@ -6,21 +8,45 @@ import {
   Container,
   CardMedia,
   Stack,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function WishlistPage() {
   const {
     wishlist,
     removeFromWishlist,
     addToCart,
-    setWishlist, 
+    setWishlist,
+    cart,
   } = useCartContext();
 
   const navigate = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const clearWishlist = () => {
-    setWishlist([]); // Clear all wishlist items
+    setWishlist([]);
+    setSnackbarMessage('Wishlist cleared');
+    setSnackbarOpen(true);
+  };
+
+  const handleMoveToCart = (item: any) => {
+    const alreadyInCart = cart.some((p) => p.id === item.id);
+    if (!alreadyInCart) {
+      addToCart(item);
+    }
+    removeFromWishlist(item.id);
+    setSnackbarMessage(`${item.name} moved to cart`);
+    setSnackbarOpen(true);
+  };
+
+  const handleRemove = (id: number) => {
+    removeFromWishlist(id);
+    setSnackbarMessage(`Item removed from wishlist`);
+    setSnackbarOpen(true);
   };
 
   return (
@@ -33,7 +59,6 @@ export default function WishlistPage() {
         <Typography>No items in wishlist.</Typography>
       ) : (
         <>
-          {/* Clear + Go to Cart Buttons */}
           <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
             <Button variant="outlined" color="error" onClick={clearWishlist}>
               Clear Wishlist
@@ -43,7 +68,6 @@ export default function WishlistPage() {
             </Button>
           </Box>
 
-          {/* Wishlist Items */}
           {wishlist.map((item) => (
             <Box
               key={item.id}
@@ -55,6 +79,9 @@ export default function WishlistPage() {
                 alignItems: 'center',
                 gap: 2,
                 borderRadius: 2,
+                boxShadow: 1,
+                transition: 'all 0.2s ease',
+                '&:hover': { backgroundColor: '#f9f9f9' },
               }}
             >
               <CardMedia
@@ -66,24 +93,27 @@ export default function WishlistPage() {
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h6">{item.name}</Typography>
                 <Typography variant="body2" color="textSecondary">
-                  ₹{item.price}
+                  ₹{item.price.toFixed(2)}
                 </Typography>
               </Box>
 
               <Stack direction="row" spacing={1}>
                 <Button
                   variant="contained"
-                  onClick={() => {
-                    addToCart(item);
-                    removeFromWishlist(item.id);
+                  sx={{
+                    textTransform: 'none',
+                    backgroundColor: '#4CAF50',
+                    '&:hover': { backgroundColor: '#388e3c' },
                   }}
+                  onClick={() => handleMoveToCart(item)}
                 >
                   Move to Cart
                 </Button>
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => removeFromWishlist(item.id)}
+                  sx={{ textTransform: 'none' }}
+                  onClick={() => handleRemove(item.id)}
                 >
                   Remove
                 </Button>
@@ -92,6 +122,17 @@ export default function WishlistPage() {
           ))}
         </>
       )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="success" onClose={() => setSnackbarOpen(false)} sx={{ fontWeight: 600 }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

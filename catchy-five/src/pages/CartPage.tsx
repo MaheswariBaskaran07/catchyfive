@@ -10,51 +10,55 @@ import {
   IconButton,
   Divider,
   Snackbar,
-  Alert
+  Alert,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'; 
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from 'react';
 
 export default function CartPage() {
-  const { cart, removeFromCart, addToCart } = useCartContext();
+  const {
+    cart,
+    removeFromCart,
+    addToCart,
+    updateCartItemQuantity, // ✅ using the new function
+  } = useCartContext();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [remainingAmount, setRemainingAmount] = useState('0.00');
-
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const freeDeliveryThreshold = 80;
 
   const cartTotal = cart.reduce(
-    (total, item) => total + item.price * (item.quantity || 1),
+    (total, item) => total + item.price * (item.quantity || 0),
     0
   );
 
   const handleAddToCart = (item: any) => {
     addToCart(item);
-
     const newTotal = cartTotal + item.price;
 
     if (newTotal < freeDeliveryThreshold) {
       const remaining = (freeDeliveryThreshold - newTotal).toFixed(2);
-      setRemainingAmount(remaining);
-      setSnackbarOpen(true);
+      setSnackbarMessage(`Add ₹${remaining} more to unlock free delivery!`);
+    } else {
+      setSnackbarMessage(`${item.name} quantity updated`);
     }
+
+    setSnackbarOpen(true);
   };
 
-  const decreaseQuantity = (itemId: number) => {
-    const item = cart.find((p) => p.id === itemId);
-    if (!item) return;
-
-    if ((item.quantity || 1) > 1) {
-      const updatedCart = cart.map((p) =>
-        p.id === itemId ? { ...p, quantity: (p.quantity || 1) - 1 } : p
-      );
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
-      window.location.reload(); 
+  const handleDecreaseQuantity = (item: any) => {
+    const newQty = (item.quantity || 1) - 1;
+    if (newQty <= 0) {
+      removeFromCart(item.id);
+      setSnackbarMessage(`${item.name} removed from cart`);
     } else {
-      removeFromCart(itemId);
+      updateCartItemQuantity(item.id, newQty);
+      setSnackbarMessage(`${item.name} quantity decreased`);
     }
+    setSnackbarOpen(true);
   };
 
   return (
@@ -68,7 +72,7 @@ export default function CartPage() {
       ) : (
         <>
           {cart.map((item) => (
-            <Card key={item.id} sx={{ display: 'flex', mb: 3 }}>
+            <Card key={item.id} sx={{ display: 'flex', mb: 3, boxShadow: 2 }}>
               <CardMedia
                 component="img"
                 sx={{ width: 140, objectFit: 'contain' }}
@@ -78,22 +82,27 @@ export default function CartPage() {
               <CardContent sx={{ flex: 1 }}>
                 <Typography variant="h6">{item.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Price: ${item.price.toFixed(2)}
+                  Price: ₹{item.price.toFixed(2)}
                 </Typography>
                 <Box display="flex" alignItems="center" gap={1} mt={1}>
-                  <IconButton onClick={() => decreaseQuantity(item.id)} size="small">
+                  <IconButton onClick={() => handleDecreaseQuantity(item)} size="small">
                     <RemoveIcon />
                   </IconButton>
-                  <Typography>{item.quantity || 1}</Typography>
+                  <Typography>{item.quantity ?? 0}</Typography>
                   <IconButton onClick={() => handleAddToCart(item)} size="small">
                     <AddIcon />
                   </IconButton>
                 </Box>
                 <Button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => {
+                    removeFromCart(item.id);
+                    setSnackbarMessage(`${item.name} removed from cart`);
+                    setSnackbarOpen(true);
+                  }}
                   color="error"
+                  startIcon={<DeleteIcon />}
                   variant="outlined"
-                  sx={{ mt: 2 }}
+                  sx={{ mt: 2, textTransform: 'none' }}
                 >
                   Remove
                 </Button>
@@ -105,15 +114,20 @@ export default function CartPage() {
 
           <Box textAlign="right">
             <Typography variant="h6">
-              Total: <strong>${cartTotal.toFixed(2)}</strong>
+              Total: <strong>₹{cartTotal.toFixed(2)}</strong>
             </Typography>
+            {cartTotal < freeDeliveryThreshold && (
+              <Typography variant="body2" color="text.secondary">
+                Add ₹{(freeDeliveryThreshold - cartTotal).toFixed(2)} more for free delivery
+              </Typography>
+            )}
           </Box>
         </>
       )}
 
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={4000}
+        autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
@@ -122,8 +136,7 @@ export default function CartPage() {
           onClose={() => setSnackbarOpen(false)}
           sx={{ fontWeight: 600, display: 'flex', alignItems: 'center' }}
         >
-          <ShoppingCartIcon sx={{ color: '#1976d2', mr: 1 }} />
-          Add ${remainingAmount} more to unlock free delivery!
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </Container>
