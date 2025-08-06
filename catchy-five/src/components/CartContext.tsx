@@ -112,7 +112,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         removeFromCart,
         removeFromWishlist,
         setWishlist,
-        updateCartItemQuantity, // ✅ Newly added
+        updateCartItemQuantity, 
       }}
     >
       {children}

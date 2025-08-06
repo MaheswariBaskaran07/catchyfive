@@ -23,7 +23,7 @@ export default function CartPage() {
     cart,
     removeFromCart,
     addToCart,
-    updateCartItemQuantity, // ✅ using the new function
+    updateCartItemQuantity, 
   } = useCartContext();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);

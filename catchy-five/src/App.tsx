@@ -9,6 +9,11 @@ import CategoryPage from './pages/CategoryPage';
 import AddAddress from './pages/AddAddress';
 import NotFound from './pages/NotFound';
 import WishlistPage from './pages/WishlistPage';
+import AboutPage from './pages/AboutPage';
+import ShopPage from './pages/ShopPage';
+import ContactPage from './pages/ContactPage';
+import OffersPage from './pages/OffersPage';
+
 
 function App() {
   return (
@@ -23,6 +28,10 @@ function App() {
          <Route path="/category/:categoryName" element={<CategoryPage />} />
          <Route path="/cartpage"element={<CartPage />}/>
         <Route path="/wishlistpage"element={<WishlistPage />}/>
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/shop" element={<ShopPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/offers" element={<OffersPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       </CartProvider>

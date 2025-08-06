@@ -1,5 +1,3 @@
-// pages/WishlistPage.tsx
-
 import { useCartContext } from '../components/CartContext';
 import {
   Box,

@@ -34,7 +34,7 @@ export default function AddAddress() {
         overflow: 'hidden',
       }}
     >
-      {/* Optional decorative background icons */}
+      {/*  background icons */}
       
           <Box
   component="img"
