@@ -13,6 +13,8 @@ import AboutPage from './pages/AboutPage';
 import ShopPage from './pages/ShopPage';
 import ContactPage from './pages/ContactPage';
 import OffersPage from './pages/OffersPage';
+import SearchResults from './pages/SearchResults';
+
 
 
 function App() {
@@ -32,6 +34,7 @@ function App() {
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/offers" element={<OffersPage />} />
+        <Route path="/search" element={<SearchResults />} /> 
         <Route path="*" element={<NotFound />} />
       </Routes>
       </CartProvider>

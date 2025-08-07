@@ -58,7 +58,7 @@ export default function CategoryPage() {
   const products = mockData[categoryKey as keyof typeof mockData] || [];
 
   const [quantities, setQuantities] = useState<{ [id: number]: number }>(() =>
-    Object.fromEntries(products.map((item) => [item.id, 0]))
+    Object.fromEntries(products.map((item) => [item.id, 1]))
   );
 
   const handleAddToCart = (item: any) => {
@@ -152,7 +152,9 @@ export default function CategoryPage() {
                           ${item.originalPrice.toFixed(2)}
                         </Typography>
                       )}
-                      <Typography variant="h6" color="primary">${item.price.toFixed(2)}</Typography>
+                      <Typography variant="h6" color="primary">
+                         {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                      </Typography>
                       {discount > 0 && (
                         <Box sx={{ border: '1px solid #ccc', borderRadius: 1, px: 0.5, fontSize: '0.75rem', color: '#388e3c', backgroundColor: '#e8f5e9' }}>
                           {discount}% OFF

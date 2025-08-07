@@ -82,7 +82,8 @@ export default function CartPage() {
               <CardContent sx={{ flex: 1 }}>
                 <Typography variant="h6">{item.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Price: ₹{item.price.toFixed(2)}
+                 Price: {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+
                 </Typography>
                 <Box display="flex" alignItems="center" gap={1} mt={1}>
                   <IconButton onClick={() => handleDecreaseQuantity(item)} size="small">
@@ -114,11 +115,13 @@ export default function CartPage() {
 
           <Box textAlign="right">
             <Typography variant="h6">
-              Total: <strong>₹{cartTotal.toFixed(2)}</strong>
+             Total: <strong>{cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</strong>
+
             </Typography>
             {cartTotal < freeDeliveryThreshold && (
               <Typography variant="body2" color="text.secondary">
-                Add ₹{(freeDeliveryThreshold - cartTotal).toFixed(2)} more for free delivery
+                Add { (freeDeliveryThreshold - cartTotal).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) } more for free delivery
+
               </Typography>
             )}
           </Box>

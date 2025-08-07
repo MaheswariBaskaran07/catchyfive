@@ -20,7 +20,6 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useCartContext } from '../components/CartContext';
 
-// ✅ Define Product type
 interface Product {
   id: number;
   name: string;
@@ -71,129 +70,135 @@ const ShopPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ py: 5, px: 2 }}>
-      <div className="container">
-        {/* Heading and Sort */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} flexWrap="wrap" gap={2}>
-          <Typography variant="h4" fontWeight={700}>
-            {categoryFilter
-              ? `${categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)} Collection`
-              : 'Shop All Products'}
-          </Typography>
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>Sort By</InputLabel>
-            <Select value={sort} label="Sort By" onChange={(e) => setSort(e.target.value)}>
-              <MenuItem value="default">Default</MenuItem>
-              <MenuItem value="lowToHigh">Price: Low to High</MenuItem>
-              <MenuItem value="highToLow">Price: High to Low</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+    <Box sx={{ py: 5, px: { xs: 1, sm: 2, md: 4 } }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} flexWrap="wrap" gap={2}>
+        <Typography variant="h4" fontWeight={700}>
+          {categoryFilter
+            ? `${categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)} Collection`
+            : 'Shop All Products'}
+        </Typography>
 
-        {/* Product Grid */}
-        <Grid container spacing={4}>
-          {filteredProducts.map((product) => (
-            <Grid item xs={12} sm={6} md={4} key={product.id}>
-              <Card
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <InputLabel>Sort By</InputLabel>
+          <Select value={sort} label="Sort By" onChange={(e) => setSort(e.target.value)}>
+            <MenuItem value="default">Default</MenuItem>
+            <MenuItem value="lowToHigh">Price: Low to High</MenuItem>
+            <MenuItem value="highToLow">Price: High to Low</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      <Grid container spacing={3}>
+        {filteredProducts.map((product) => (
+          <Grid item xs={12} sm={6} md={4} key={product.id}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'scale(1.02)' },
+              }}
+            >
+              <CardMedia
+                component="img"
+                image={product.img}
+                alt={product.name}
                 sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.2s',
-                  '&:hover': { transform: 'scale(1.02)' },
+                  height: 200,
+                  objectFit: 'cover',
+                  width: '100%',
                 }}
-              >
-                <CardMedia component="img" height="180" image={product.img} alt={product.name} />
-                <CardContent sx={{ flexGrow: 1 }}>
+              />
+              <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1 }}>
+                <Box>
                   <Typography variant="subtitle1" fontWeight={600}>
                     {product.name}
                   </Typography>
                   <Typography color="text.secondary" mb={2}>
                     ₹{product.price}
                   </Typography>
+                </Box>
 
-                  {/* Quantity + Add to Cart + Wishlist */}
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flexDirection={isSm ? 'column' : 'row'}
-                    gap={1}
-                    mt={2}
-                  >
-                    {/* Quantity Selector */}
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => handleQuantityChange(product.id, -1)}
-                        sx={{ minWidth: 30, px: 0 }}
-                      >
-                        –
-                      </Button>
-                      <Typography>{quantities[product.id] || 1}</Typography>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => handleQuantityChange(product.id, 1)}
-                        sx={{ minWidth: 30, px: 0 }}
-                      >
-                        +
-                      </Button>
-                    </Box>
-
-                    {/* Add to Cart */}
+                {/* Controls in one row */}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  flexWrap="wrap"
+                  gap={1}
+                  mt={2}
+                >
+                  {/* Quantity */}
+                  <Box display="flex" alignItems="center" gap={1}>
                     <Button
-                      variant="contained"
-                      onClick={() => addToCart({ ...product, quantity: quantities[product.id] || 1 })}
-                      startIcon={<ShoppingCartIcon />}
-                      sx={{
-                        bgcolor: '#4CAF50',
-                        color: '#fff',
-                        fontWeight: 600,
-                        textTransform: 'none',
-                        borderRadius: '10px',
-                        boxShadow: '0px 4px 12px rgba(0, 128, 0, 0.2)',
-                        transition: 'all 0.3s ease',
-                        flexGrow: 1,
-                        '&:hover': {
-                          bgcolor: '#388e3c',
-                          boxShadow: '0px 6px 16px rgba(0, 128, 0, 0.3)',
-                        },
-                      }}
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handleQuantityChange(product.id, -1)}
+                      sx={{ minWidth: 30, px: 0 }}
                     >
-                      Add to Cart
+                      –
                     </Button>
-
-                    {/* Wishlist Button */}
-                    <IconButton
-                      onClick={() => addToWishlist(product)}
-                      sx={{
-                        color: '#d32f2f',
-                        '&:hover': {
-                          color: '#b71c1c',
-                          backgroundColor: '#ffe6e6',
-                        },
-                      }}
+                    <Typography>{quantities[product.id] || 1}</Typography>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handleQuantityChange(product.id, 1)}
+                      sx={{ minWidth: 30, px: 0 }}
                     >
-                      <FavoriteBorderIcon />
-                    </IconButton>
+                      +
+                    </Button>
                   </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
 
-        {/* Empty State */}
-        {filteredProducts.length === 0 && (
-          <Box textAlign="center" mt={6}>
-            <Typography variant="h6" color="text.secondary">
-              No products found in this category.
-            </Typography>
-          </Box>
-        )}
-      </div>
+                  {/* Add to Cart */}
+                  <Button
+                    variant="contained"
+                    onClick={() => addToCart({ ...product, quantity: quantities[product.id] || 1 })}
+                    startIcon={<ShoppingCartIcon />}
+                    sx={{
+                      bgcolor: '#4CAF50',
+                      color: '#fff',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      borderRadius: '10px',
+                      px: 2,
+                      whiteSpace: 'nowrap',
+                      '&:hover': {
+                        bgcolor: '#388e3c',
+                      },
+                    }}
+                  >
+                    Add to Cart
+                  </Button>
+
+                  {/* Wishlist */}
+                  <IconButton
+                    onClick={() => addToWishlist(product)}
+                    sx={{
+                      color: '#d32f2f',
+                      '&:hover': {
+                        color: '#b71c1c',
+                        backgroundColor: '#ffe6e6',
+                      },
+                    }}
+                  >
+                    <FavoriteBorderIcon />
+                  </IconButton>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Empty State */}
+      {filteredProducts.length === 0 && (
+        <Box textAlign="center" mt={6}>
+          <Typography variant="h6" color="text.secondary">
+            No products found in this category.
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };

@@ -8,6 +8,8 @@ import {
   Stack,
   Snackbar,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -20,6 +22,9 @@ export default function WishlistPage() {
     setWishlist,
     cart,
   } = useCartContext();
+
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -57,7 +62,16 @@ export default function WishlistPage() {
         <Typography>No items in wishlist.</Typography>
       ) : (
         <>
-          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
+          <Box
+            sx={{
+              mb: 3,
+              display: 'flex',
+              flexDirection: isSm ? 'column' : 'row',
+              justifyContent: 'space-between',
+              alignItems: isSm ? 'stretch' : 'center',
+              gap: 2,
+            }}
+          >
             <Button variant="outlined" color="error" onClick={clearWishlist}>
               Clear Wishlist
             </Button>
@@ -73,31 +87,44 @@ export default function WishlistPage() {
                 mb: 2,
                 p: 2,
                 border: '1px solid #ccc',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
                 borderRadius: 2,
                 boxShadow: 1,
                 transition: 'all 0.2s ease',
                 '&:hover': { backgroundColor: '#f9f9f9' },
+                display: 'flex',
+                flexDirection: isSm ? 'column' : 'row',
+                alignItems: isSm ? 'flex-start' : 'center',
+                gap: 2,
               }}
             >
               <CardMedia
                 component="img"
                 image={item.img}
                 alt={item.name}
-                sx={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 1 }}
+                sx={{
+                  width: isSm ? '100%' : 120,
+                  height: isSm ? 'auto' : 80,
+                  maxHeight: 200,
+                  objectFit: 'cover',
+                  borderRadius: 1,
+                }}
               />
+
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h6">{item.name}</Typography>
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color="text.secondary">
                   ₹{item.price.toFixed(2)}
                 </Typography>
               </Box>
 
-              <Stack direction="row" spacing={1}>
+              <Stack
+                direction={isSm ? 'column' : 'row'}
+                spacing={1}
+                sx={{ width: isSm ? '100%' : 'auto' }}
+              >
                 <Button
                   variant="contained"
+                  fullWidth={isSm}
                   sx={{
                     textTransform: 'none',
                     backgroundColor: '#4CAF50',
@@ -110,6 +137,7 @@ export default function WishlistPage() {
                 <Button
                   variant="outlined"
                   color="error"
+                  fullWidth={isSm}
                   sx={{ textTransform: 'none' }}
                   onClick={() => handleRemove(item.id)}
                 >
@@ -127,7 +155,11 @@ export default function WishlistPage() {
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity="success" onClose={() => setSnackbarOpen(false)} sx={{ fontWeight: 600 }}>
+        <Alert
+          severity="success"
+          onClose={() => setSnackbarOpen(false)}
+          sx={{ fontWeight: 600 }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

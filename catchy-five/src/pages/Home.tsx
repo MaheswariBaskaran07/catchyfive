@@ -177,7 +177,7 @@ export default function HomePage() {
                     {item.name}
                   </Typography>
                   <Typography color="textSecondary" mb={2}>
-                    ₹{item.price}
+                    {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
                     <Button
