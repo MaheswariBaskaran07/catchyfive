@@ -1,24 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Grid,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  Button,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  useTheme,
-  useMediaQuery,
-  IconButton,
-} from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useCartContext } from '../components/CartContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface Product {
   id: number;
@@ -29,8 +12,6 @@ interface Product {
 }
 
 const ShopPage: React.FC = () => {
-  const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
   const { addToCart, addToWishlist } = useCartContext();
   const [searchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
@@ -38,6 +19,8 @@ const ShopPage: React.FC = () => {
   const [sort, setSort] = useState<string>('default');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<{ [id: number]: number }>({});
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [wishlistStatus, setWishlistStatus] = useState<{ [id: number]: boolean }>({});
 
   const products: Product[] = [
     { id: 1, name: 'Tomatoes (1kg)', price: 30, img: '/tomatoes.jpg', category: 'vegetables' },
@@ -69,137 +52,141 @@ const ShopPage: React.FC = () => {
     });
   };
 
+  const handleAddToWishlist = (product: Product) => {
+    addToWishlist(product);
+    setWishlistStatus((prev) => ({ ...prev, [product.id]: true }));
+
+    setTimeout(() => {
+      setWishlistStatus((prev) => ({ ...prev, [product.id]: false }));
+    }, 2000);
+  };
+
   return (
-    <Box sx={{ py: 5, px: { xs: 1, sm: 2, md: 4 } }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} flexWrap="wrap" gap={2}>
-        <Typography variant="h4" fontWeight={700}>
+    <div className="container py-4">
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 className="fw-bold mb-0">
           {categoryFilter
             ? `${categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)} Collection`
             : 'Shop All Products'}
-        </Typography>
+        </h2>
 
-        <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel>Sort By</InputLabel>
-          <Select value={sort} label="Sort By" onChange={(e) => setSort(e.target.value)}>
-            <MenuItem value="default">Default</MenuItem>
-            <MenuItem value="lowToHigh">Price: Low to High</MenuItem>
-            <MenuItem value="highToLow">Price: High to Low</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+        <div>
+          <label className="me-2">Sort By:</label>
+          <select
+            className="form-select form-select-sm d-inline-block"
+            style={{ width: '160px' }}
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
+            <option value="default">Default</option>
+            <option value="lowToHigh">Price: Low to High</option>
+            <option value="highToLow">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
 
-      <Grid container spacing={3}>
-        {filteredProducts.map((product) => (
-          <Grid item xs={12} sm={6} md={4} key={product.id}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'transform 0.2s',
-                '&:hover': { transform: 'scale(1.02)' },
-              }}
-            >
-              <CardMedia
-                component="img"
-                image={product.img}
-                alt={product.name}
-                sx={{
-                  height: 200,
-                  objectFit: 'cover',
-                  width: '100%',
-                }}
-              />
-              <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1 }}>
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {product.name}
-                  </Typography>
-                  <Typography color="text.secondary" mb={2}>
-                    ₹{product.price}
-                  </Typography>
-                </Box>
+      <div className="row g-4">
+        {filteredProducts.map((product) => {
+          const cartBtnStyle: React.CSSProperties = {
+            backgroundColor: hovered === product.id ? '#388e3c' : '#4CAF50',
+            color: 'white',
+            fontWeight: 600,
+            textTransform: 'none',
+            borderRadius: '10px',
+            padding: '6px 12px',
+            whiteSpace: 'nowrap',
+            border: 'none',
+            transition: 'background-color 0.3s ease',
+            fontSize: '0.875rem',
+          };
 
-                {/* Controls in one row */}
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  flexWrap="wrap"
-                  gap={1}
-                  mt={2}
-                >
-                  {/* Quantity */}
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handleQuantityChange(product.id, -1)}
-                      sx={{ minWidth: 30, px: 0 }}
+          return (
+            <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={product.id}>
+              <div className="card h-100 shadow-sm position-relative">
+                <img
+                  src={product.img}
+                  alt={product.name}
+                  className="card-img-top"
+                  style={{ height: '180px', objectFit: 'cover' }}
+                />
+                <div className="card-body d-flex flex-column justify-content-between">
+                  <div>
+                    <h6 className="fw-bold">{product.name}</h6>
+                    <p className="text-muted mb-2">₹{product.price}</p>
+                  </div>
+
+                  <div className="d-flex align-items-center justify-content-between flex-wrap gap-1 mt-3">
+                    <div className="d-flex align-items-center gap-2">
+                      <button
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => handleQuantityChange(product.id, -1)}
+                      >
+                        –
+                      </button>
+                      <span>{quantities[product.id] || 1}</span>
+                      <button
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => handleQuantityChange(product.id, 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button
+                      className="btn btn-sm"
+                      onClick={() =>
+                        addToCart({ ...product, quantity: quantities[product.id] || 1 })
+                      }
+                      onMouseEnter={() => setHovered(product.id)}
+                      onMouseLeave={() => setHovered(null)}
+                      style={cartBtnStyle}
                     >
-                      –
-                    </Button>
-                    <Typography>{quantities[product.id] || 1}</Typography>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handleQuantityChange(product.id, 1)}
-                      sx={{ minWidth: 30, px: 0 }}
-                    >
-                      +
-                    </Button>
-                  </Box>
+                      Add to Cart
+                    </button>
 
-                  {/* Add to Cart */}
-                  <Button
-                    variant="contained"
-                    onClick={() => addToCart({ ...product, quantity: quantities[product.id] || 1 })}
-                    startIcon={<ShoppingCartIcon />}
-                    sx={{
-                      bgcolor: '#4CAF50',
-                      color: '#fff',
-                      fontWeight: 600,
-                      textTransform: 'none',
-                      borderRadius: '10px',
-                      px: 2,
-                      whiteSpace: 'nowrap',
-                      '&:hover': {
-                        bgcolor: '#388e3c',
-                      },
-                    }}
-                  >
-                    Add to Cart
-                  </Button>
+                    <div style={{ position: 'relative' }}>
+                      <button
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => handleAddToWishlist(product)}
+                      >
+                        ❤
+                      </button>
 
-                  {/* Wishlist */}
-                  <IconButton
-                    onClick={() => addToWishlist(product)}
-                    sx={{
-                      color: '#d32f2f',
-                      '&:hover': {
-                        color: '#b71c1c',
-                        backgroundColor: '#ffe6e6',
-                      },
-                    }}
-                  >
-                    <FavoriteBorderIcon />
-                  </IconButton>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                      {/* Tooltip message near the heart icon */}
+                      {wishlistStatus[product.id] && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '-28px',
+                            right: 0,
+                            backgroundColor: '#4CAF50',
+                            color: 'white',
+                            padding: '3px 10px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            whiteSpace: 'nowrap',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                            zIndex: 10,
+                          }}
+                        >
+                          Added to wishlist
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Empty State */}
       {filteredProducts.length === 0 && (
-        <Box textAlign="center" mt={6}>
-          <Typography variant="h6" color="text.secondary">
-            No products found in this category.
-          </Typography>
-        </Box>
+        <div className="text-center mt-5">
+          <p className="text-muted">No products found in this category.</p>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 

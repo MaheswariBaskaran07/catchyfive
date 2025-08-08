@@ -28,6 +28,7 @@ import {
   Category,
   ExpandMore,
   ExpandLess,
+  Explore as ExploreIcon,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -93,35 +94,74 @@ export default function Header() {
     setSearchQuery('');
   };
 
+  // ✅ Updated drawerList with correct toggle behavior
   const drawerList = (
-    <Box sx={{ width: 250 }} onClick={() => setDrawerOpen(false)}>
+    <Box sx={{ width: 250 }}>
       <List>
-        <ListItemButton onClick={() => navigate('/')}>
+        <ListItemButton
+          onClick={() => {
+            navigate('/');
+            setDrawerOpen(false);
+          }}
+        >
           <ListItemText primary="Home" />
         </ListItemButton>
+
         <ListItemButton onClick={() => setOpenCategories(!openCategories)}>
           <ListItemText primary="Categories" />
           {openCategories ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
+
         <Collapse in={openCategories} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {['Vegetables', 'Fruits', 'Groceries', 'Beverages'].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }} onClick={() => navigate(`/category/${item.toLowerCase()}`)}>
+              <ListItemButton
+                key={item}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  navigate(`/category/${item.toLowerCase()}`);
+                  setDrawerOpen(false);
+                }}
+              >
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
           </List>
         </Collapse>
-        <ListItemButton onClick={() => navigate('/offers')}>
+
+        <ListItemButton
+          onClick={() => {
+            navigate('/offers');
+            setDrawerOpen(false);
+          }}
+        >
           <ListItemText primary="Offers" />
         </ListItemButton>
-        <ListItemButton onClick={() => navigate('/contact')}>
+
+        <ListItemButton
+          onClick={() => {
+            navigate('/contact');
+            setDrawerOpen(false);
+          }}
+        >
           <ListItemText primary="Contact" />
         </ListItemButton>
-        <ListItemButton onClick={() => navigate('/about')}>
+
+        <ListItemButton
+          onClick={() => {
+            navigate('/about');
+            setDrawerOpen(false);
+          }}
+        >
           <ListItemText primary="About" />
         </ListItemButton>
-        <ListItemButton onClick={() => navigate('/add-address')}>
+
+        <ListItemButton
+          onClick={() => {
+            navigate('/add-address');
+            setDrawerOpen(false);
+          }}
+        >
           <ListItemText primary="Add Delivery Address" />
         </ListItemButton>
       </List>
@@ -272,9 +312,12 @@ export default function Header() {
                 onClick={(e) => setAnchorElPages(e.currentTarget)}
                 endIcon={<ExpandMore />}
                 sx={navStyle}
+                aria-label="Explore menu"
               >
-                Pages
+                <ExploreIcon sx={{ mr: 0.5, fontSize: '1.2rem', verticalAlign: 'middle' }} />
+                Explore
               </Button>
+
               <Menu
                 anchorEl={anchorElPages}
                 open={Boolean(anchorElPages)}
@@ -293,32 +336,30 @@ export default function Header() {
                 ))}
               </Menu>
 
-              {[
-                {
-                  tooltip: 'Wishlist',
-                  badgeContent: wishlistItemCount,
-                  icon: <Favorite sx={{ color: '#d32f2f' }} />,
-                  onClick: () => navigate('/wishlistpage'),
-                },
-                {
-                  tooltip: `Cart Total: ₹${cartTotal.toFixed(2)}`,
-                  badgeContent: cartItemCount,
-                  icon: <ShoppingCart sx={{ color: '#1976d2' }} />,
-                  onClick: () => navigate('/cartpage'),
-                },
-                {
-                  tooltip: 'Account',
-                  badgeContent: 0,
-                  icon: <AccountCircle sx={{ color: '#388e3c' }} />,
-                  onClick: () => navigate('/login'),
-                },
-                {
-                  tooltip: 'Delivery Info',
-                  badgeContent: 0,
-                  icon: <LocalShipping sx={{ color: '#2e7d32' }} />,
-                  onClick: () => navigate('/add-address'),
-                },
-              ].map(({ tooltip, badgeContent, icon, onClick }, i) => (
+              {[{
+                tooltip: 'Wishlist',
+                badgeContent: wishlistItemCount,
+                icon: <Favorite sx={{ color: '#d32f2f' }} />,
+                onClick: () => navigate('/wishlistpage'),
+              },
+              {
+                tooltip: `Cart Total: ₹${cartTotal.toFixed(2)}`,
+                badgeContent: cartItemCount,
+                icon: <ShoppingCart sx={{ color: '#1976d2' }} />,
+                onClick: () => navigate('/cartpage'),
+              },
+              {
+                tooltip: 'Account',
+                badgeContent: 0,
+                icon: <AccountCircle sx={{ color: '#388e3c' }} />,
+                onClick: () => navigate('/login'),
+              },
+              {
+                tooltip: 'Delivery Info',
+                badgeContent: 0,
+                icon: <LocalShipping sx={{ color: '#2e7d32' }} />,
+                onClick: () => navigate('/add-address'),
+              }].map(({ tooltip, badgeContent, icon, onClick }, i) => (
                 <Tooltip key={i} title={tooltip}>
                   <IconButton onClick={onClick}>
                     <Badge badgeContent={badgeContent} color="error">
@@ -330,12 +371,13 @@ export default function Header() {
             </Box>
           </Toolbar>
         )}
+
+        <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+          {drawerList}
+        </Drawer>
       </AppBar>
 
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        {drawerList}
-      </Drawer>
-
+      {/* Scrolling text animation */}
       <style>{`
         @keyframes scroll-left {
           0% { transform: translateX(100%); }

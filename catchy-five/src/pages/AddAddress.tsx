@@ -34,40 +34,47 @@ export default function AddAddress() {
         overflow: 'hidden',
       }}
     >
-      {/*  background icons */}
-      
-          <Box
-  component="img"
-  src="/grocery1.jpg"
-  alt="groceries"
-  sx={{
-    position: 'absolute',
-    top: { xs: 10, sm: 30 },
-    left: { xs: 10, sm: 30 },
-    width: { xs: 200, sm: 200 },
-    opacity: 0.9,
-    zIndex: 0,
-    margin:10,
-  }}
-/>
-
-      {/* 🧺 Bottom Right Decorative Image */}
+      {/* Top Left Decorative Image - hidden on xs */}
       <Box
-  component="img"
-  src="/grocery2.jpg"
-  alt="groceries"
-  sx={{
-    position: 'absolute',
-    bottom: { xs: 10, sm: 30 },
-    right: { xs: 10, sm: 30 },
-    width: { xs: 200, sm: 200 },
-    opacity: 0.9,
-    zIndex: 0,
-    margin: 10,
-  }}
-/>
+        component="img"
+        src="/grocery1.jpg"
+        alt="groceries"
+        sx={{
+          position: 'absolute',
+          top: 30,
+          left: 30,
+          width: { sm: 150, md: 180 },
+          display: { xs: 'none', sm: 'block' }, // ✅ hidden on small screens
+          opacity: 0.8,
+          zIndex: 0,
+          borderRadius: 2,
+          animation: 'fadeIn 1s ease-in-out',
+          '@keyframes fadeIn': {
+            '0%': { opacity: 0 },
+            '100%': { opacity: 0.8 },
+          },
+        }}
+      />
 
-      {/* Card Container */}
+      {/* Bottom Right Decorative Image - hidden on xs */}
+      <Box
+        component="img"
+        src="/grocery2.jpg"
+        alt="groceries"
+        sx={{
+          position: 'absolute',
+          bottom: 30,
+          right: 30,
+          width: { sm: 150, md: 180 },
+          display: { xs: 'none', sm: 'block' }, // ✅ hidden on small screens
+          opacity: 0.8,
+          zIndex: 0,
+          borderRadius: 2,
+          animation: 'fadeIn 1s ease-in-out',
+        }}
+      />
+
+      {/* Form Card */}
       <Box
         width="100%"
         maxWidth="500px"
@@ -75,6 +82,7 @@ export default function AddAddress() {
         boxShadow={6}
         borderRadius={4}
         p={{ xs: 3, sm: 4 }}
+        mx="auto"
         textAlign="center"
         zIndex={1}
         sx={{
@@ -90,6 +98,7 @@ export default function AddAddress() {
           fontWeight={700}
           mb={1}
           sx={{
+            fontSize: { xs: '1.8rem', sm: '2.2rem' },
             background: 'linear-gradient(to right, #56ab2f, #a8e063)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -98,7 +107,14 @@ export default function AddAddress() {
           Add Address
         </Typography>
 
-        <Typography variant="subtitle1" color="text.secondary" mb={3}>
+        <Typography
+          variant="subtitle1"
+          color="text.secondary"
+          mb={3}
+          sx={{
+            fontSize: { xs: '0.9rem', sm: '1rem' },
+          }}
+        >
           Help us deliver your order to the right place 🚚
         </Typography>
 

@@ -11,6 +11,7 @@ import {
   Divider,
   Snackbar,
   Alert,
+  Grid,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -23,7 +24,7 @@ export default function CartPage() {
     cart,
     removeFromCart,
     addToCart,
-    updateCartItemQuantity, 
+    updateCartItemQuantity,
   } = useCartContext();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -62,8 +63,8 @@ export default function CartPage() {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Container sx={{ py: { xs: 2, sm: 4 } }}>
+      <Typography variant="h4" gutterBottom display="flex" alignItems="center">
         <ShoppingCartIcon sx={{ color: '#1976d2', mr: 1 }} /> Your Cart
       </Typography>
 
@@ -71,57 +72,112 @@ export default function CartPage() {
         <Typography>No items in cart.</Typography>
       ) : (
         <>
-          {cart.map((item) => (
-            <Card key={item.id} sx={{ display: 'flex', mb: 3, boxShadow: 2 }}>
-              <CardMedia
-                component="img"
-                sx={{ width: 140, objectFit: 'contain' }}
-                image={item.img}
-                alt={item.name}
-              />
-              <CardContent sx={{ flex: 1 }}>
-                <Typography variant="h6">{item.name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                 Price: {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-
-                </Typography>
-                <Box display="flex" alignItems="center" gap={1} mt={1}>
-                  <IconButton onClick={() => handleDecreaseQuantity(item)} size="small">
-                    <RemoveIcon />
-                  </IconButton>
-                  <Typography>{item.quantity ?? 0}</Typography>
-                  <IconButton onClick={() => handleAddToCart(item)} size="small">
-                    <AddIcon />
-                  </IconButton>
-                </Box>
-                <Button
-                  onClick={() => {
-                    removeFromCart(item.id);
-                    setSnackbarMessage(`${item.name} removed from cart`);
-                    setSnackbarOpen(true);
+          <Grid container spacing={3}>
+            {cart.map((item) => (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <Card
+                  sx={{
+                    boxShadow: 2,
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  variant="outlined"
-                  sx={{ mt: 2, textTransform: 'none' }}
                 >
-                  Remove
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  <CardMedia
+                    component="img"
+                    image={item.img}
+                    alt={item.name}
+                    sx={{
+                      width: '100%',
+                      height: 180,
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6">{item.name}</Typography>
+                    <Typography variant="body2" color="text.secondary" mb={1}>
+                      Price: {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                    </Typography>
 
-          <Divider sx={{ my: 3 }} />
+                    {/* Responsive Layout: Quantity + Remove */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: { xs: 'row', sm: 'column' },
+                        alignItems: { xs: 'center', sm: 'flex-start' },
+                        gap: 1,
+                        mb: 2,
+                      }}
+                    >
+                      {/* Quantity Controls */}
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <IconButton onClick={() => handleDecreaseQuantity(item)} size="small">
+                          <RemoveIcon />
+                        </IconButton>
+                        <Typography>{item.quantity ?? 0}</Typography>
+                        <IconButton onClick={() => handleAddToCart(item)} size="small">
+                          <AddIcon />
+                        </IconButton>
+                      </Box>
 
-          <Box textAlign="right">
+                      {/* Remove Button with hover behavior on mobile */}
+                      <Button
+                        onClick={() => {
+                          removeFromCart(item.id);
+                          setSnackbarMessage(`${item.name} removed from cart`);
+                          setSnackbarOpen(true);
+                        }}
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                        variant="outlined"
+                        sx={{
+                          textTransform: 'none',
+                          minWidth: { xs: 'auto', sm: '100%' },
+                          px: 2,
+                          py: 0.5,
+                          position: 'relative',
+                          '& .hover-label': {
+                            display: { xs: 'none', sm: 'inline' },
+                          },
+                          '&:hover .hover-label': {
+                            display: 'inline',
+                          },
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          className="hover-label"
+                        >
+                          Remove
+                        </Typography>
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Divider sx={{ my: 4 }} />
+
+          <Box textAlign="right" sx={{ mt: 2 }}>
             <Typography variant="h6">
-             Total: <strong>{cartTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</strong>
-
+              Total:{' '}
+              <strong>
+                {cartTotal.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
+              </strong>
             </Typography>
             {cartTotal < freeDeliveryThreshold && (
               <Typography variant="body2" color="text.secondary">
-                Add { (freeDeliveryThreshold - cartTotal).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) } more for free delivery
-
+                Add{' '}
+                {(freeDeliveryThreshold - cartTotal).toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}{' '}
+                more for free delivery
               </Typography>
             )}
           </Box>
