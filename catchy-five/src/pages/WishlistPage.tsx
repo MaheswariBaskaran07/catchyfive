@@ -1,31 +1,19 @@
+import React, { useState } from 'react';
 import { useCartContext } from '../components/CartContext';
 import {
   Box,
   Typography,
   Button,
-  Container,
   CardMedia,
   Stack,
+  Container,
   Snackbar,
   Alert,
-  useTheme,
-  useMediaQuery,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 export default function WishlistPage() {
-  const {
-    wishlist,
-    removeFromWishlist,
-    addToCart,
-    setWishlist,
-    cart,
-  } = useCartContext();
-
-  const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
-
+  const { wishlist, removeFromWishlist, addToCart, setWishlist, cart } = useCartContext();
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -37,18 +25,17 @@ export default function WishlistPage() {
   };
 
   const handleMoveToCart = (item: any) => {
-    const alreadyInCart = cart.some((p) => p.id === item.id);
-    if (!alreadyInCart) {
-      addToCart(item);
+    if (!cart.some((p) => p.id === item.id)) {
+      addToCart({ ...item, quantity: 1 }); // ✅ Add to cart
     }
-    removeFromWishlist(item.id);
-    setSnackbarMessage(`${item.name} moved to cart`);
-    setSnackbarOpen(true);
+    removeFromWishlist(item.id); // ✅ Remove from wishlist
+    setSnackbarMessage(`${item.name} moved to cart`); // ✅ Show message
+    setSnackbarOpen(true); // ✅ Trigger snackbar
   };
 
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: string) => {
     removeFromWishlist(id);
-    setSnackbarMessage(`Item removed from wishlist`);
+    setSnackbarMessage('Item removed from wishlist');
     setSnackbarOpen(true);
   };
 
@@ -62,16 +49,7 @@ export default function WishlistPage() {
         <Typography>No items in wishlist.</Typography>
       ) : (
         <>
-          <Box
-            sx={{
-              mb: 3,
-              display: 'flex',
-              flexDirection: isSm ? 'column' : 'row',
-              justifyContent: 'space-between',
-              alignItems: isSm ? 'stretch' : 'center',
-              gap: 2,
-            }}
-          >
+          <Box className="d-flex justify-content-between flex-wrap mb-3 gap-2">
             <Button variant="outlined" color="error" onClick={clearWishlist}>
               Clear Wishlist
             </Button>
@@ -80,72 +58,62 @@ export default function WishlistPage() {
             </Button>
           </Box>
 
-          {wishlist.map((item) => (
-            <Box
-              key={item.id}
-              sx={{
-                mb: 2,
-                p: 2,
-                border: '1px solid #ccc',
-                borderRadius: 2,
-                boxShadow: 1,
-                transition: 'all 0.2s ease',
-                '&:hover': { backgroundColor: '#f9f9f9' },
-                display: 'flex',
-                flexDirection: isSm ? 'column' : 'row',
-                alignItems: isSm ? 'flex-start' : 'center',
-                gap: 2,
-              }}
-            >
-              <CardMedia
-                component="img"
-                image={item.img}
-                alt={item.name}
-                sx={{
-                  width: isSm ? '100%' : 120,
-                  height: isSm ? 'auto' : 80,
-                  maxHeight: 200,
-                  objectFit: 'cover',
-                  borderRadius: 1,
-                }}
-              />
-
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h6">{item.name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  ₹{item.price.toFixed(2)}
-                </Typography>
-              </Box>
-
-              <Stack
-                direction={isSm ? 'column' : 'row'}
-                spacing={1}
-                sx={{ width: isSm ? '100%' : 'auto' }}
-              >
-                <Button
-                  variant="contained"
-                  fullWidth={isSm}
+          <div className="row">
+            {wishlist.map((item) => (
+              <div key={item.id} className="col-12 col-sm-6 col-md-4 mb-3">
+                <Box
                   sx={{
-                    textTransform: 'none',
-                    backgroundColor: '#4CAF50',
-                    '&:hover': { backgroundColor: '#388e3c' },
+                    p: 2,
+                    border: '1px solid #ccc',
+                    borderRadius: 2,
+                    boxShadow: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    height: '100%',
+                    transition: 'all 0.2s',
+                    '&:hover': { backgroundColor: '#f9f9f9' },
                   }}
-                  onClick={() => handleMoveToCart(item)}
                 >
-                  Move to Cart
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  fullWidth={isSm}
-                  sx={{ textTransform: 'none' }}
-                  onClick={() => handleRemove(item.id)}
-                >
-                  Remove
-                </Button>
-              </Stack>
-            </Box>
-          ))}
+                  <CardMedia
+                    component="img"
+                    image={item.img}
+                    alt={item.name}
+                    sx={{ width: '100%', height: 200, objectFit: 'cover', mb: 2 }}
+                  />
+
+                  <Box>
+                    <Typography variant="h6">{item.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      ₹{item.price.toFixed(2)}
+                    </Typography>
+                  </Box>
+
+                  <Stack direction="column" spacing={1} sx={{ mt: 2 }}>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleMoveToCart(item)}
+                      sx={{
+                        backgroundColor: '#4caf50',
+                        '&:hover': { backgroundColor: '#388e3c' },
+                        textTransform: 'none',
+                      }}
+                    >
+                      Move to Cart
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleRemove(item.id)}
+                      sx={{ textTransform: 'none' }}
+                    >
+                      Remove
+                    </Button>
+                  </Stack>
+                </Box>
+              </div>
+            ))}
+          </div>
         </>
       )}
 
@@ -155,11 +123,7 @@ export default function WishlistPage() {
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          severity="success"
-          onClose={() => setSnackbarOpen(false)}
-          sx={{ fontWeight: 600 }}
-        >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ fontWeight: 600 }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

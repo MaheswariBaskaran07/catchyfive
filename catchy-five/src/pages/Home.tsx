@@ -92,7 +92,7 @@ export default function HomePage() {
           Fresh Groceries, Delivered to Your Doorstep
         </Typography>
         <Typography variant={isSm ? 'subtitle1' : 'h5'} mb={4}>
-          Organic, affordable, & always fresh. Welcome to CatchyFive.
+          Organic, affordable, & always fresh. Welcome to Organic Mart.
         </Typography>
         <Button
           variant="contained"
@@ -338,7 +338,7 @@ export default function HomePage() {
           </div>
           <hr style={{ borderColor: 'rgba(255,255,255,0.3)' }} />
           <Typography variant="body2" textAlign="center" mt={3} color="rgba(255,255,255,0.7)">
-            © {new Date().getFullYear()} CatchyFive. All rights reserved.
+            © {new Date().getFullYear()} Organic Mart. All rights reserved.
           </Typography>
         </div>
       </Box>

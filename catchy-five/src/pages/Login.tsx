@@ -124,7 +124,7 @@ export default function Login() {
 
 
           <Typography variant="body1" color="text.secondary">
-            Login to your CatchyFive account to start shopping fresh!
+            Login to your Organic Mart account to start shopping fresh!
           </Typography>
 
           <TextField

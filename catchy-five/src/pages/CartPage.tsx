@@ -1,56 +1,40 @@
+import React, { useState } from 'react';
 import { useCartContext } from '../components/CartContext';
 import {
   Box,
   Typography,
   Button,
-  Container,
   Card,
-  CardContent,
   CardMedia,
+  CardContent,
   IconButton,
+  Container,
   Divider,
   Snackbar,
   Alert,
-  Grid,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
-  const {
-    cart,
-    removeFromCart,
-    addToCart,
-    updateCartItemQuantity,
-  } = useCartContext();
-
+  const { cart, removeFromCart, addToCart, updateCartItemQuantity } = useCartContext();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const freeDeliveryThreshold = 80;
+  const navigate = useNavigate();
 
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.price * (item.quantity || 0),
-    0
-  );
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * (item.quantity || 0), 0);
 
-  const handleAddToCart = (item: any) => {
-    addToCart(item);
-    const newTotal = cartTotal + item.price;
-
-    if (newTotal < freeDeliveryThreshold) {
-      const remaining = (freeDeliveryThreshold - newTotal).toFixed(2);
-      setSnackbarMessage(`Add ₹${remaining} more to unlock free delivery!`);
-    } else {
-      setSnackbarMessage(`${item.name} quantity updated`);
-    }
-
+  const handleAdd = (item: any) => {
+    addToCart({ ...item, quantity: 1 });
+    setSnackbarMessage(`${item.name} quantity updated`);
     setSnackbarOpen(true);
   };
 
-  const handleDecreaseQuantity = (item: any) => {
+  const handleDecrease = (item: any) => {
     const newQty = (item.quantity || 1) - 1;
     if (newQty <= 0) {
       removeFromCart(item.id);
@@ -67,119 +51,90 @@ export default function CartPage() {
       <Typography variant="h4" gutterBottom display="flex" alignItems="center">
         <ShoppingCartIcon sx={{ color: '#1976d2', mr: 1 }} /> Your Cart
       </Typography>
-
       {cart.length === 0 ? (
         <Typography>No items in cart.</Typography>
       ) : (
         <>
-          <Grid container spacing={3}>
+          <div className="row">
             {cart.map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item.id}>
-                <Card
-                  sx={{
-                    boxShadow: 2,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
+              <div key={item.id} className="col-12 col-sm-6 col-md-4 mb-3">
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <CardMedia
                     component="img"
                     image={item.img}
                     alt={item.name}
-                    sx={{
-                      width: '100%',
-                      height: 180,
-                      objectFit: 'cover',
-                    }}
+                    sx={{ height: 180, objectFit: 'cover' }}
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant="h6">{item.name}</Typography>
-                    <Typography variant="body2" color="text.secondary" mb={1}>
-                      Price: {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                    <Typography color="text.secondary" mb={1}>
+                      ₹{item.price.toFixed(2)}
                     </Typography>
 
-                    {/* Responsive Layout: Quantity + Remove */}
                     <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: { xs: 'row', sm: 'column' },
-                        alignItems: { xs: 'center', sm: 'flex-start' },
-                        gap: 1,
-                        mb: 2,
-                      }}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap={1}
+                      mb={2}
                     >
-                      {/* Quantity Controls */}
                       <Box display="flex" alignItems="center" gap={1}>
-                        <IconButton onClick={() => handleDecreaseQuantity(item)} size="small">
+                        <IconButton onClick={() => handleDecrease(item)} size="small" color="primary">
                           <RemoveIcon />
                         </IconButton>
                         <Typography>{item.quantity ?? 0}</Typography>
-                        <IconButton onClick={() => handleAddToCart(item)} size="small">
+                        <IconButton onClick={() => handleAdd(item)} size="small" color="primary">
                           <AddIcon />
                         </IconButton>
                       </Box>
 
-                      {/* Remove Button with hover behavior on mobile */}
                       <Button
+                        size="small"
+                        color="error"
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
                         onClick={() => {
                           removeFromCart(item.id);
                           setSnackbarMessage(`${item.name} removed from cart`);
                           setSnackbarOpen(true);
                         }}
-                        color="error"
-                        startIcon={<DeleteIcon />}
-                        variant="outlined"
                         sx={{
                           textTransform: 'none',
-                          minWidth: { xs: 'auto', sm: '100%' },
-                          px: 2,
-                          py: 0.5,
-                          position: 'relative',
-                          '& .hover-label': {
-                            display: { xs: 'none', sm: 'inline' },
-                          },
-                          '&:hover .hover-label': {
-                            display: 'inline',
-                          },
+                          ml: 2,
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        <Typography
-                          variant="body2"
-                          className="hover-label"
-                        >
-                          Remove
-                        </Typography>
+                        Remove
                       </Button>
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid>
+              </div>
             ))}
-          </Grid>
+          </div>
 
           <Divider sx={{ my: 4 }} />
 
-          <Box textAlign="right" sx={{ mt: 2 }}>
+          <Box textAlign="right">
             <Typography variant="h6">
-              Total:{' '}
-              <strong>
-                {cartTotal.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                })}
-              </strong>
+              Total: <strong>₹{cartTotal.toFixed(2)}</strong>
             </Typography>
+
             {cartTotal < freeDeliveryThreshold && (
-              <Typography variant="body2" color="text.secondary">
-                Add{' '}
-                {(freeDeliveryThreshold - cartTotal).toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                })}{' '}
-                more for free delivery
+              <Typography color="text.secondary" mb={2}>
+                Add ₹{(freeDeliveryThreshold - cartTotal).toFixed(2)} more for free delivery
               </Typography>
             )}
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate('/checkout')}
+              disabled={cart.length === 0}
+              sx={{ mt: 2, textTransform: 'none' }}
+            >
+              Proceed to Checkout
+            </Button>
           </Box>
         </>
       )}
@@ -190,11 +145,7 @@ export default function CartPage() {
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          severity="info"
-          onClose={() => setSnackbarOpen(false)}
-          sx={{ fontWeight: 600, display: 'flex', alignItems: 'center' }}
-        >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="info" sx={{ fontWeight: 600 }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

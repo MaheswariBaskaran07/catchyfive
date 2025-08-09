@@ -16,8 +16,8 @@ import DiscountIcon from '@mui/icons-material/Discount';
 const offers = [
   {
     title: '10% OFF on First Order',
-    description: 'Use code CATCHY10 during checkout. Valid for new users only.',
-    code: 'CATCHY10',
+    description: 'Use code ORGANIC10 during checkout. Valid for new users only.',
+    code: 'ORGANIC10',
     image: '/offer1.png',
     expires: 'Aug 31, 2025',
   },

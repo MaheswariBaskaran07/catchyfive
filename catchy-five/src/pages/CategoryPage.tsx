@@ -30,34 +30,34 @@ export default function CategoryPage() {
 
   const mockData = {
     vegetables: [
-      { id: 1, name: 'Carrot', price: 1.5, originalPrice: 2.0, rating: 4.5, reviews: 32, image: '/images/vegetables/carrot.jpg' },
-      { id: 2, name: 'Spinach', price: 2.0, originalPrice: 2.5, rating: 4.0, reviews: 20, image: '/images/vegetables/spinach.jpg' },
-      { id: 3, name: 'Broccoli', price: 1.8, originalPrice: 2.4, rating: 4.2, reviews: 15, image: '/images/vegetables/broccoli.jpg' },
-      { id: 4, name: 'Tomato', price: 1.2, originalPrice: 1.5, rating: 4.6, reviews: 45, image: '/images/vegetables/tomato.jpg' },
+      { id: 'vegetables-1', name: 'Carrot', price: 1.5, originalPrice: 2.0, rating: 4.5, reviews: 32, image: '/images/vegetables/carrot.jpg' },
+      { id: 'vegetables-2', name: 'Spinach', price: 2.0, originalPrice: 2.5, rating: 4.0, reviews: 20, image: '/images/vegetables/spinach.jpg' },
+      { id: 'vegetables-3', name: 'Broccoli', price: 1.8, originalPrice: 2.4, rating: 4.2, reviews: 15, image: '/images/vegetables/broccoli.jpg' },
+      { id: 'vegetables-4', name: 'Tomato', price: 1.2, originalPrice: 1.5, rating: 4.6, reviews: 45, image: '/images/vegetables/tomato.jpg' },
     ],
     fruits: [
-      { id: 1, name: 'Apple', price: 1.2, originalPrice: 1.5, rating: 4.4, reviews: 40, image: '/images/fruits/apple.jpg' },
-      { id: 2, name: 'Banana', price: 0.8, originalPrice: 1.0, rating: 4.3, reviews: 55, image: '/images/fruits/banana.jpg' },
-      { id: 3, name: 'Mango', price: 2.5, originalPrice: 3.0, rating: 4.8, reviews: 38, image: '/images/fruits/mango.jpg' },
-      { id: 4, name: 'Grapes', price: 2.0, originalPrice: 2.5, rating: 4.1, reviews: 28, image: '/images/fruits/grapes.jpg' },
+      { id: 'fruits-1', name: 'Apple', price: 1.2, originalPrice: 1.5, rating: 4.4, reviews: 40, image: '/images/fruits/apple.jpg' },
+      { id: 'fruits-2', name: 'Banana', price: 0.8, originalPrice: 1.0, rating: 4.3, reviews: 55, image: '/images/fruits/banana.jpg' },
+      { id: 'fruits-3', name: 'Mango', price: 2.5, originalPrice: 3.0, rating: 4.8, reviews: 38, image: '/images/fruits/mango.jpg' },
+      { id: 'fruits-4', name: 'Grapes', price: 2.0, originalPrice: 2.5, rating: 4.1, reviews: 28, image: '/images/fruits/grapes.jpg' },
     ],
     groceries: [
-      { id: 1, name: 'Rice', price: 5.0, originalPrice: 6.0, rating: 4.7, reviews: 64, image: '/images/groceries/rice.jpg' },
-      { id: 2, name: 'Wheat Flour', price: 4.0, originalPrice: 5.0, rating: 4.5, reviews: 50, image: '/images/groceries/flour.jpg' },
-      { id: 3, name: 'Sugar', price: 3.5, originalPrice: 4.0, rating: 4.2, reviews: 48, image: '/images/groceries/sugar.jpg' },
-      { id: 4, name: 'Salt', price: 1.0, originalPrice: 1.2, rating: 4.0, reviews: 30, image: '/images/groceries/salt.jpg' },
+      { id: 'groceries-1', name: 'Rice', price: 5.0, originalPrice: 6.0, rating: 4.7, reviews: 64, image: '/images/groceries/rice.jpg' },
+      { id: 'groceries-2', name: 'Wheat Flour', price: 4.0, originalPrice: 5.0, rating: 4.5, reviews: 50, image: '/images/groceries/flour.jpg' },
+      { id: 'groceries-3', name: 'Sugar', price: 3.5, originalPrice: 4.0, rating: 4.2, reviews: 48, image: '/images/groceries/sugar.jpg' },
+      { id: 'groceries-4', name: 'Salt', price: 1.0, originalPrice: 1.2, rating: 4.0, reviews: 30, image: '/images/groceries/salt.jpg' },
     ],
     beverages: [
-      { id: 1, name: 'Green Tea', price: 3.0, originalPrice: 3.5, rating: 4.3, reviews: 29, image: '/images/beverages/greentea.jpg' },
-      { id: 2, name: 'Orange Juice', price: 2.5, originalPrice: 3.0, rating: 4.6, reviews: 34, image: '/images/beverages/orangejuice.jpg' },
-      { id: 3, name: 'Coffee', price: 4.0, originalPrice: 5.0, rating: 4.9, reviews: 70, image: '/images/beverages/coffee.jpg' },
-      { id: 4, name: 'Mineral Water', price: 1.5, originalPrice: 2.0, rating: 4.1, reviews: 25, image: '/images/beverages/water.jpg' },
+      { id: 'beverages-1', name: 'Green Tea', price: 3.0, originalPrice: 3.5, rating: 4.3, reviews: 29, image: '/images/beverages/greentea.jpg' },
+      { id: 'beverages-2', name: 'Orange Juice', price: 2.5, originalPrice: 3.0, rating: 4.6, reviews: 34, image: '/images/beverages/orangejuice.jpg' },
+      { id: 'beverages-3', name: 'Coffee', price: 4.0, originalPrice: 5.0, rating: 4.9, reviews: 70, image: '/images/beverages/coffee.jpg' },
+      { id: 'beverages-4', name: 'Mineral Water', price: 1.5, originalPrice: 2.0, rating: 4.1, reviews: 25, image: '/images/beverages/water.jpg' },
     ],
   };
 
   const products = mockData[categoryKey as keyof typeof mockData] || [];
 
-  const [quantities, setQuantities] = useState<{ [id: number]: number }>(() =>
+  const [quantities, setQuantities] = useState<{ [id: string]: number }>(() =>
     Object.fromEntries(products.map((item) => [item.id, 1]))
   );
 
@@ -91,14 +91,17 @@ export default function CategoryPage() {
     setSnackbarOpen(true);
   };
 
-  const handleQuantityChange = (id: number, value: string) => {
+  const handleQuantityChange = (id: string, value: string) => {
     const parsed = parseInt(value, 10);
     setQuantities((prev) => ({ ...prev, [id]: isNaN(parsed) ? 0 : parsed }));
   };
 
   return (
     <Box sx={{ px: { xs: 2, sm: 3, md: 5 }, py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 4, textTransform: 'capitalize', color: '#4CAF50', textAlign: 'center', fontWeight: 'bold' }}>
+      <Typography
+        variant="h4"
+        sx={{ mb: 4, textTransform: 'capitalize', color: '#4CAF50', textAlign: 'center', fontWeight: 'bold' }}
+      >
         {categoryName}
       </Typography>
 
@@ -114,7 +117,7 @@ export default function CategoryPage() {
               : 0;
 
             return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={`${categoryKey}-${item.id}`}>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
                 <Card
                   sx={{
                     height: '100%',
@@ -127,12 +130,7 @@ export default function CategoryPage() {
                     '&:hover': { transform: 'translateY(-5px)' },
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    image={item.image}
-                    alt={item.name}
-                    sx={{ height: 180, objectFit: 'cover' }}
-                  />
+                  <CardMedia component="img" image={item.image} alt={item.name} sx={{ height: 180, objectFit: 'cover' }} />
 
                   <CardContent>
                     <Typography variant="h6" fontWeight="bold">
@@ -153,17 +151,28 @@ export default function CategoryPage() {
                         </Typography>
                       )}
                       <Typography variant="h6" color="primary">
-                         {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                        {item.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                       </Typography>
                       {discount > 0 && (
-                        <Box sx={{ border: '1px solid #ccc', borderRadius: 1, px: 0.5, fontSize: '0.75rem', color: '#388e3c', backgroundColor: '#e8f5e9' }}>
+                        <Box
+                          sx={{
+                            border: '1px solid #ccc',
+                            borderRadius: 1,
+                            px: 0.5,
+                            fontSize: '0.75rem',
+                            color: '#388e3c',
+                            backgroundColor: '#e8f5e9',
+                          }}
+                        >
                           {discount}% OFF
                         </Box>
                       )}
                     </Box>
                   </CardContent>
 
-                  <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, pb: 2, mt: 'auto' }}>
+                  <CardActions
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, pb: 2, mt: 'auto' }}
+                  >
                     <TextField
                       type="number"
                       size="small"

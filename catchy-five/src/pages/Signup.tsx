@@ -80,7 +80,7 @@ export default function Signup() {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          Join CatchyFive
+          Join Organic Mart
         </Typography>
 
         <Typography variant="subtitle1" color="textSecondary" mb={3}>

@@ -51,7 +51,7 @@ export default function AboutPage() {
           fontWeight={700}
           mb={2}
         >
-          About CatchyFive
+          About Organic Mart
         </Typography>
         <Typography
           variant={isSm ? 'subtitle1' : 'h5'}
@@ -73,7 +73,7 @@ export default function AboutPage() {
         <Box
           component="img"
           src={aboutImage}
-          alt="About CatchyFive"
+          alt="About Organic Mart"
           sx={{
             width: '100%',
             height: { xs: 200, sm: 300, md: 400 },
@@ -94,7 +94,7 @@ export default function AboutPage() {
           mx="auto"
           mb={5}
         >
-          Welcome to <strong>CatchyFive</strong> — your trusted partner in fresh, healthy living.
+          Welcome to <strong>Organic Mart</strong> — your trusted partner in fresh, healthy living.
           We deliver high-quality, organic groceries from local farms directly to your home,
           supporting sustainability and convenience. Join us in fostering a healthier, more
           eco-conscious world.

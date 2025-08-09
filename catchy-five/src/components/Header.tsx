@@ -29,6 +29,7 @@ import {
   ExpandMore,
   ExpandLess,
   Explore as ExploreIcon,
+  Logout,
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +38,8 @@ import { useCartContext } from './CartContext';
 export default function Header() {
   const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
   const [anchorElPages, setAnchorElPages] = useState<null | HTMLElement>(null);
+  const [anchorElAccount, setAnchorElAccount] = useState<null | HTMLElement>(null);
+  const [anchorElDelivery, setAnchorElDelivery] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -94,16 +97,16 @@ export default function Header() {
     setSearchQuery('');
   };
 
-  // ✅ Updated drawerList with correct toggle behavior
+  const handleLogout = () => {
+    setAnchorElAccount(null);
+    console.log('Logged out'); // Replace with actual logout logic
+    navigate('/');
+  };
+
   const drawerList = (
     <Box sx={{ width: 250 }}>
       <List>
-        <ListItemButton
-          onClick={() => {
-            navigate('/');
-            setDrawerOpen(false);
-          }}
-        >
+        <ListItemButton onClick={() => { navigate('/'); setDrawerOpen(false); }}>
           <ListItemText primary="Home" />
         </ListItemButton>
 
@@ -129,39 +132,19 @@ export default function Header() {
           </List>
         </Collapse>
 
-        <ListItemButton
-          onClick={() => {
-            navigate('/offers');
-            setDrawerOpen(false);
-          }}
-        >
+        <ListItemButton onClick={() => { navigate('/offers'); setDrawerOpen(false); }}>
           <ListItemText primary="Offers" />
         </ListItemButton>
 
-        <ListItemButton
-          onClick={() => {
-            navigate('/contact');
-            setDrawerOpen(false);
-          }}
-        >
+        <ListItemButton onClick={() => { navigate('/contact'); setDrawerOpen(false); }}>
           <ListItemText primary="Contact" />
         </ListItemButton>
 
-        <ListItemButton
-          onClick={() => {
-            navigate('/about');
-            setDrawerOpen(false);
-          }}
-        >
+        <ListItemButton onClick={() => { navigate('/about'); setDrawerOpen(false); }}>
           <ListItemText primary="About" />
         </ListItemButton>
 
-        <ListItemButton
-          onClick={() => {
-            navigate('/add-address');
-            setDrawerOpen(false);
-          }}
-        >
+        <ListItemButton onClick={() => { navigate('/add-address'); setDrawerOpen(false); }}>
           <ListItemText primary="Add Delivery Address" />
         </ListItemButton>
       </List>
@@ -170,63 +153,66 @@ export default function Header() {
 
   return (
     <Box>
-      {/* Top banner */}
-      <Box
-        sx={{
-          bgcolor: '#4940d4ff',
-          color: 'white',
-          py: 0.7,
-          px: 2,
-          fontSize: '0.9rem',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'inline-block',
-            animation: 'scroll-left 20s linear infinite',
-            fontWeight: 600,
-          }}
-        >
-          🚚 Free delivery on orders above $80 | 🎉 Use code <strong>CATCHY10</strong> for 10% OFF!
+      {/* Top Banner */}
+      <Box sx={{
+        bgcolor: '#4940d4ff',
+        color: 'white',
+        py: 0.7,
+        px: 2,
+        fontSize: '0.9rem',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+      }}>
+        <Box sx={{
+          display: 'inline-block',
+          animation: 'scroll-left 20s linear infinite',
+          fontWeight: 600,
+        }}>
+          🚚 Free delivery on orders above $80 | 🎉 Use code <strong>ORGANIC10</strong> for 10% OFF!
         </Box>
       </Box>
 
       <AppBar position="static" elevation={0} sx={{ bgcolor: '#fff', color: '#000', px: 2, py: 1.2 }}>
         {isMobile ? (
           <>
-            {/* Mobile top row */}
             <Toolbar sx={{ justifyContent: 'space-between', px: 0 }}>
               <IconButton onClick={() => setDrawerOpen(true)} edge="start">
                 <MenuIcon />
               </IconButton>
 
-              <Box
-                onClick={() => navigate('/')}
-                sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', flexGrow: 1, justifyContent: 'center' }}
-              >
+              <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', flexGrow: 1, justifyContent: 'center' }}>
                 <img src="/logo1.png" alt="Logo" style={{ height: 40, marginRight: 8 }} />
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>
-                  Organic Mart
-                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>Organic Mart</Typography>
               </Box>
 
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Tooltip title="Account">
-                  <IconButton onClick={() => navigate('/login')}>
+                  <IconButton onClick={(e) => setAnchorElAccount(e.currentTarget)}>
                     <AccountCircle sx={{ color: '#388e3c' }} />
                   </IconButton>
                 </Tooltip>
+                <Menu anchorEl={anchorElAccount} open={Boolean(anchorElAccount)} onClose={() => setAnchorElAccount(null)}>
+                  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/login'); }}>Login</MenuItem>
+                  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/signup'); }}>Signup</MenuItem>
+                  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/add-address'); }}>Add Address</MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    Logout
+                    <Logout sx={{ ml: 1, fontSize: '1.2rem', color: '#d32f2f' }} />
+                  </MenuItem>
+                </Menu>
+
                 <Tooltip title="Delivery Info">
-                  <IconButton onClick={() => navigate('/add-address')}>
+                  <IconButton onClick={(e) => setAnchorElDelivery(e.currentTarget)}>
                     <LocalShipping sx={{ color: '#2e7d32' }} />
                   </IconButton>
                 </Tooltip>
+                <Menu anchorEl={anchorElDelivery} open={Boolean(anchorElDelivery)} onClose={() => setAnchorElDelivery(null)}>
+                  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/delivery-info'); }}>Delivery Info</MenuItem>
+                  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/save-address'); }}>Save Address</MenuItem>
+                </Menu>
               </Box>
             </Toolbar>
 
-            {/* Mobile second row */}
             <Toolbar component="form" onSubmit={handleSearchSubmit} sx={{ px: 0, gap: 1 }}>
               <Box sx={{ ...searchBoxStyle, flexGrow: 1 }}>
                 <Search sx={{ color: '#888', mr: 1 }} />
@@ -255,47 +241,23 @@ export default function Header() {
             </Toolbar>
           </>
         ) : (
-          // Desktop layout
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-            {/* Left - Logo & Nav */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                 <img src="/logo1.png" alt="Logo" style={{ height: 45, marginRight: 10 }} />
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>
-                  Organic Mart
-                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4CAF50' }}>Organic Mart</Typography>
               </Box>
-              <Button onClick={() => navigate('/')} sx={navStyle}>
-                Home
-              </Button>
-              <Button
-                onClick={(e) => setAnchorElCategory(e.currentTarget)}
-                startIcon={<Category />}
-                endIcon={<ExpandMore />}
-                sx={navStyle}
-              >
+              <Button onClick={() => navigate('/')} sx={navStyle}>Home</Button>
+              <Button onClick={(e) => setAnchorElCategory(e.currentTarget)} startIcon={<Category />} endIcon={<ExpandMore />} sx={navStyle}>
                 Categories
               </Button>
-              <Menu
-                anchorEl={anchorElCategory}
-                open={Boolean(anchorElCategory)}
-                onClose={() => setAnchorElCategory(null)}
-              >
+              <Menu anchorEl={anchorElCategory} open={Boolean(anchorElCategory)} onClose={() => setAnchorElCategory(null)}>
                 {['Vegetables', 'Fruits', 'Groceries', 'Beverages'].map((item) => (
-                  <MenuItem
-                    key={item}
-                    onClick={() => {
-                      setAnchorElCategory(null);
-                      navigate(`/category/${item.toLowerCase()}`);
-                    }}
-                  >
-                    {item}
-                  </MenuItem>
+                  <MenuItem key={item} onClick={() => { setAnchorElCategory(null); navigate(`/category/${item.toLowerCase()}`); }}>{item}</MenuItem>
                 ))}
               </Menu>
             </Box>
 
-            {/* Center - Search Bar */}
             <Box component="form" onSubmit={handleSearchSubmit} sx={{ ...searchBoxStyle, maxWidth: 500 }}>
               <Search sx={{ color: '#888', mr: 1 }} />
               <InputBase
@@ -306,68 +268,57 @@ export default function Header() {
               />
             </Box>
 
-            {/* Right - Icons */}
             <Box display="flex" alignItems="center" gap={1}>
-              <Button
-                onClick={(e) => setAnchorElPages(e.currentTarget)}
-                endIcon={<ExpandMore />}
-                sx={navStyle}
-                aria-label="Explore menu"
-              >
-                <ExploreIcon sx={{ mr: 0.5, fontSize: '1.2rem', verticalAlign: 'middle' }} />
+              <Button onClick={(e) => setAnchorElPages(e.currentTarget)} endIcon={<ExpandMore />} sx={navStyle}>
+                <ExploreIcon sx={{ mr: 0.5, fontSize: '1.2rem' }} />
                 Explore
               </Button>
-
-              <Menu
-                anchorEl={anchorElPages}
-                open={Boolean(anchorElPages)}
-                onClose={() => setAnchorElPages(null)}
-              >
+              <Menu anchorEl={anchorElPages} open={Boolean(anchorElPages)} onClose={() => setAnchorElPages(null)}>
                 {['Offers', 'Contact', 'About'].map((page) => (
-                  <MenuItem
-                    key={page}
-                    onClick={() => {
-                      setAnchorElPages(null);
-                      navigate(`/${page.toLowerCase()}`);
-                    }}
-                  >
-                    {page}
-                  </MenuItem>
+                  <MenuItem key={page} onClick={() => { setAnchorElPages(null); navigate(`/${page.toLowerCase()}`); }}>{page}</MenuItem>
                 ))}
               </Menu>
 
-              {[{
-                tooltip: 'Wishlist',
-                badgeContent: wishlistItemCount,
-                icon: <Favorite sx={{ color: '#d32f2f' }} />,
-                onClick: () => navigate('/wishlistpage'),
-              },
-              {
-                tooltip: `Cart Total: ₹${cartTotal.toFixed(2)}`,
-                badgeContent: cartItemCount,
-                icon: <ShoppingCart sx={{ color: '#1976d2' }} />,
-                onClick: () => navigate('/cartpage'),
-              },
-              {
-                tooltip: 'Account',
-                badgeContent: 0,
-                icon: <AccountCircle sx={{ color: '#388e3c' }} />,
-                onClick: () => navigate('/login'),
-              },
-              {
-                tooltip: 'Delivery Info',
-                badgeContent: 0,
-                icon: <LocalShipping sx={{ color: '#2e7d32' }} />,
-                onClick: () => navigate('/add-address'),
-              }].map(({ tooltip, badgeContent, icon, onClick }, i) => (
-                <Tooltip key={i} title={tooltip}>
-                  <IconButton onClick={onClick}>
-                    <Badge badgeContent={badgeContent} color="error">
-                      {icon}
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-              ))}
+              <Tooltip title="Wishlist">
+                <IconButton onClick={() => navigate('/wishlistpage')}>
+                  <Badge badgeContent={wishlistItemCount} color="error">
+                    <Favorite sx={{ color: '#d32f2f' }} />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title={`Cart Total: ₹${cartTotal.toFixed(2)}`}>
+                <IconButton onClick={() => navigate('/cartpage')}>
+                  <Badge badgeContent={cartItemCount} color="error">
+                    <ShoppingCart sx={{ color: '#1976d2' }} />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Account">
+                <IconButton onClick={(e) => setAnchorElAccount(e.currentTarget)}>
+                  <AccountCircle sx={{ color: '#388e3c' }} />
+                </IconButton>
+              </Tooltip>
+              <Menu anchorEl={anchorElAccount} open={Boolean(anchorElAccount)} onClose={() => setAnchorElAccount(null)}>
+                <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/login'); }}>Login</MenuItem>
+                <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/signup'); }}>Signup</MenuItem>
+                <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/add-address'); }}>Add Address</MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  Logout
+                  <Logout sx={{ ml: 1, fontSize: '1.2rem', color: '#d32f2f' }} />
+                </MenuItem>
+              </Menu>
+
+              <Tooltip title="Delivery Info">
+                <IconButton onClick={(e) => setAnchorElDelivery(e.currentTarget)}>
+                  <LocalShipping sx={{ color: '#2e7d32' }} />
+                </IconButton>
+              </Tooltip>
+              <Menu anchorEl={anchorElDelivery} open={Boolean(anchorElDelivery)} onClose={() => setAnchorElDelivery(null)}>
+                <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/delivery-info'); }}>Delivery Info</MenuItem>
+                <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/save-address'); }}>Save Address</MenuItem>
+              </Menu>
             </Box>
           </Toolbar>
         )}
@@ -377,7 +328,6 @@ export default function Header() {
         </Drawer>
       </AppBar>
 
-      {/* Scrolling text animation */}
       <style>{`
         @keyframes scroll-left {
           0% { transform: translateX(100%); }
