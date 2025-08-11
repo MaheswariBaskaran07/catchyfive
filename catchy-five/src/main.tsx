@@ -4,6 +4,7 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AddressProvider } from './components/AddressContext';
 const theme = createTheme({
   palette: {
     primary: {
@@ -26,7 +27,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
+       <AddressProvider>
         <App />
+        </AddressProvider>
       </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>

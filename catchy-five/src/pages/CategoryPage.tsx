@@ -17,7 +17,7 @@ import {
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useCartContext } from '../components/CartContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function CategoryPage() {
   const { categoryName } = useParams();
@@ -57,9 +57,16 @@ export default function CategoryPage() {
 
   const products = mockData[categoryKey as keyof typeof mockData] || [];
 
-  const [quantities, setQuantities] = useState<{ [id: string]: number }>(() =>
-    Object.fromEntries(products.map((item) => [item.id, 1]))
-  );
+  const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
+
+  // ✅ Initialize quantities to 1 when products load
+  useEffect(() => {
+    const initialQuantities: { [id: string]: number } = {};
+    products.forEach((item) => {
+      initialQuantities[item.id] = 1;
+    });
+    setQuantities(initialQuantities);
+  }, [categoryKey]);
 
   const handleAddToCart = (item: any) => {
     const quantity = quantities[item.id] || 0;

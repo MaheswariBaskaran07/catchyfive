@@ -13,6 +13,14 @@
   </head>
   <body>
     <div id="root"></div>
+    <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+<script>
+  function onGooglePayLoaded() {
+    window.googlePayClient = new google.payments.api.PaymentsClient({
+      environment: "TEST"
+    });
+  }
+</script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

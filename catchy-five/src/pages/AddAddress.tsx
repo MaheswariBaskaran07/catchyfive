@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,27 +7,58 @@ import {
   InputAdornment,
   Fade,
 } from '@mui/material';
-import { Home, LocationOn } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Home, LocationOn, Person, Phone } from '@mui/icons-material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAddress } from '../components/AddressContext';
+import type { Address } from '../components/AddressContext'; 
+import { v4 as uuidv4 } from 'uuid';
 
-export default function AddAddress() {
+const AddAddress = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id?: string }>();
+  const { addresses, saveAddress } = useAddress();
   const [saved, setSaved] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [formData, setFormData] = useState<Address>({
+    id: '',
+    name: '',
+    phone: '',
+    line1: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: '',
+  });
+
+  useEffect(() => {
+    if (id) {
+      const existing = addresses.find((a) => a.id === id);
+      if (existing) {
+        setFormData(existing);
+      }
+    }
+  }, [id, addresses]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const toSave = { ...formData, id: formData.id || uuidv4() };
+    saveAddress(toSave);
     setSaved(true);
-    setTimeout(() => navigate('/'), 2000);
+    setTimeout(() => navigate('/save-address'), 1500);
   };
 
   return (
     <Box
-      minHeight="100vh"
+      minHeight="calc(100vh - 64px)"
       display="flex"
       justifyContent="center"
       alignItems="center"
       px={2}
+      py={6}
       sx={{
         background: 'linear-gradient(to right, #d4fc79, #3df355ff)',
         fontFamily: "'Poppins', sans-serif",
@@ -34,7 +66,7 @@ export default function AddAddress() {
         overflow: 'hidden',
       }}
     >
-      {/* Top Left Decorative Image - hidden on xs */}
+      {/* Background Images */}
       <Box
         component="img"
         src="/grocery1.jpg"
@@ -44,19 +76,11 @@ export default function AddAddress() {
           top: 30,
           left: 30,
           width: { sm: 150, md: 180 },
-          display: { xs: 'none', sm: 'block' }, // ✅ hidden on small screens
+          display: { xs: 'none', sm: 'block' },
           opacity: 0.8,
-          zIndex: 0,
           borderRadius: 2,
-          animation: 'fadeIn 1s ease-in-out',
-          '@keyframes fadeIn': {
-            '0%': { opacity: 0 },
-            '100%': { opacity: 0.8 },
-          },
         }}
       />
-
-      {/* Bottom Right Decorative Image - hidden on xs */}
       <Box
         component="img"
         src="/grocery2.jpg"
@@ -66,15 +90,13 @@ export default function AddAddress() {
           bottom: 30,
           right: 30,
           width: { sm: 150, md: 180 },
-          display: { xs: 'none', sm: 'block' }, // ✅ hidden on small screens
+          display: { xs: 'none', sm: 'block' },
           opacity: 0.8,
-          zIndex: 0,
           borderRadius: 2,
-          animation: 'fadeIn 1s ease-in-out',
         }}
       />
 
-      {/* Form Card */}
+      {/* Main Form Box */}
       <Box
         width="100%"
         maxWidth="500px"
@@ -85,13 +107,6 @@ export default function AddAddress() {
         mx="auto"
         textAlign="center"
         zIndex={1}
-        sx={{
-          animation: 'fadeInUp 0.6s ease-in-out',
-          '@keyframes fadeInUp': {
-            '0%': { opacity: 0, transform: 'translateY(20px)' },
-            '100%': { opacity: 1, transform: 'translateY(0)' },
-          },
-        }}
       >
         <Typography
           variant="h4"
@@ -104,27 +119,15 @@ export default function AddAddress() {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          Add Address
+          {id ? 'Edit Address' : 'Add Address'}
         </Typography>
 
-        <Typography
-          variant="subtitle1"
-          color="text.secondary"
-          mb={3}
-          sx={{
-            fontSize: { xs: '0.9rem', sm: '1rem' },
-          }}
-        >
+        <Typography variant="subtitle1" color="text.secondary" mb={3}>
           Help us deliver your order to the right place 🚚
         </Typography>
 
         <Fade in={saved}>
-          <Typography
-            color="green"
-            fontWeight={600}
-            mb={2}
-            sx={{ display: saved ? 'block' : 'none' }}
-          >
+          <Typography color="green" fontWeight={600} mb={2}>
             ✅ Address saved successfully!
           </Typography>
         </Fade>
@@ -138,8 +141,42 @@ export default function AddAddress() {
             gap={2}
           >
             <TextField
+              label="Full Name"
+              name="name"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Person />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="Phone Number"
+              name="phone"
+              required
+              value={formData.phone}
+              onChange={handleChange}
+              fullWidth
+              type="tel"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Phone />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
               label="Address Line 1"
               required
+              name="line1"
+              value={formData.line1}
+              onChange={handleChange}
               fullWidth
               InputProps={{
                 startAdornment: (
@@ -150,19 +187,27 @@ export default function AddAddress() {
               }}
             />
             <TextField
-              label="Address Line 2"
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Home />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Postcode"
+              label="City"
+              name="city"
               required
+              value={formData.city}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="State"
+              name="state"
+              required
+              value={formData.state}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="Postal Code"
+              name="postalCode"
+              required
+              value={formData.postalCode}
+              onChange={handleChange}
               fullWidth
               InputProps={{
                 startAdornment: (
@@ -171,6 +216,14 @@ export default function AddAddress() {
                   </InputAdornment>
                 ),
               }}
+            />
+            <TextField
+              label="Country"
+              name="country"
+              required
+              value={formData.country}
+              onChange={handleChange}
+              fullWidth
             />
 
             <Button
@@ -196,4 +249,6 @@ export default function AddAddress() {
       </Box>
     </Box>
   );
-}
+};
+
+export default AddAddress;

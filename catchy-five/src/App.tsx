@@ -15,6 +15,8 @@ import ContactPage from './pages/ContactPage';
 import OffersPage from './pages/OffersPage';
 import SearchResults from './pages/SearchResults';
 import CheckoutPage from './pages/CheckoutPage';
+import SaveAddress from './components/SaveAddress';
+import DeliveryInfo from './pages/DeliveryInfo';
 
 
 function App() {
@@ -36,6 +38,9 @@ function App() {
         <Route path="/offers" element={<OffersPage />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/checkout" element={<CheckoutPage />} /> 
+        <Route path="/save-address" element={<SaveAddress />} />
+        <Route path="/add-address/:id" element={<AddAddress />} />
+        <Route path="/delivery-info" element={<DeliveryInfo />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       </CartProvider>

@@ -68,7 +68,7 @@ export default function CartPage() {
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant="h6">{item.name}</Typography>
                     <Typography color="text.secondary" mb={1}>
-                      ₹{item.price.toFixed(2)}
+                      ${item.price.toFixed(2)}
                     </Typography>
 
                     <Box
@@ -117,12 +117,12 @@ export default function CartPage() {
 
           <Box textAlign="right">
             <Typography variant="h6">
-              Total: <strong>₹{cartTotal.toFixed(2)}</strong>
+              Total: <strong>${cartTotal.toFixed(2)}</strong>
             </Typography>
 
             {cartTotal < freeDeliveryThreshold && (
               <Typography color="text.secondary" mb={2}>
-                Add ₹{(freeDeliveryThreshold - cartTotal).toFixed(2)} more for free delivery
+                Add ${(freeDeliveryThreshold - cartTotal).toFixed(2)} more for free delivery
               </Typography>
             )}
 
