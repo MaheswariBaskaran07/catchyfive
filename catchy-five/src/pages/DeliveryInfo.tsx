@@ -15,12 +15,10 @@ import { useAddress } from '../components/AddressContext';
 import { useNavigate } from 'react-router-dom';
 import { LocalShipping } from '@mui/icons-material';
 
-
 const DeliveryInfoPage = () => {
   const { addresses, deleteAddress } = useAddress();
   const navigate = useNavigate();
 
-  // Track selected address id
   const [selectedId, setSelectedId] = useState<string | null>(
     addresses.length > 0 ? addresses[0].id : null
   );
@@ -34,9 +32,8 @@ const DeliveryInfoPage = () => {
       alert('Please select an address!');
       return;
     }
-    // For example, navigate to checkout or pass selected address to next step
     alert('Delivery address confirmed!');
-    // navigate('/checkout'); // or any other route
+    // navigate('/checkout'); // or any route
   };
 
   return (
@@ -45,8 +42,8 @@ const DeliveryInfoPage = () => {
       display="flex"
       justifyContent="center"
       alignItems="flex-start"
-      pt={{ xs: 10, md: 12 }}
-      px={2}
+      pt={{ xs: 8, md: 10 }}
+      px={{ xs: 1.5, sm: 2 }}
       sx={{
         background: 'linear-gradient(to right, #d4fc79, #96e6a1)',
       }}
@@ -54,30 +51,31 @@ const DeliveryInfoPage = () => {
       <Paper
         elevation={6}
         sx={{
-          p: 4,
-          maxWidth: 600,
+          p: { xs: 2, sm: 3, md: 4 },
+          maxWidth: 700,
           width: '100%',
           borderRadius: 4,
           bgcolor: 'white',
           mt: 2,
         }}
       >
-        <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-  <LocalShipping sx={{ fontSize: 32, color: '#56ab2f', mr: 1 }} />
-  <Typography
-    variant="h4"
-    fontWeight={700}
-    sx={{
-      background: 'linear-gradient(to right, #56ab2f, #a8e063)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-    }}
-  >
-    Select Delivery Address
-  </Typography>
-</Box>
+        {/* Header */}
+        <Box display="flex" justifyContent="center" alignItems="center" mb={3}>
+          <LocalShipping sx={{ fontSize: 32, color: '#56ab2f', mr: 1 }} />
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            sx={{
+              background: 'linear-gradient(to right, #56ab2f, #a8e063)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Select Delivery Address
+          </Typography>
+        </Box>
 
-
+        {/* Address List */}
         {addresses.length === 0 ? (
           <Typography textAlign="center" color="gray" mt={4}>
             No delivery address added.
@@ -95,8 +93,10 @@ const DeliveryInfoPage = () => {
                       p: 2,
                       boxShadow: 1,
                       display: 'flex',
-                      alignItems: 'center',
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      alignItems: { xs: 'flex-start', sm: 'center' },
                       justifyContent: 'space-between',
+                      gap: 2,
                     }}
                   >
                     <FormControlLabel
@@ -104,15 +104,16 @@ const DeliveryInfoPage = () => {
                       control={<Radio />}
                       label={
                         <Box>
-                          <Typography><strong>{address.name}</strong></Typography>
+                          <Typography fontWeight={600}>{address.name}</Typography>
                           <Typography>{address.line1}, {address.city}, {address.state}</Typography>
                           <Typography>{address.postalCode}, {address.country}</Typography>
                           <Typography>Phone: {address.phone}</Typography>
                         </Box>
                       }
+                      sx={{ flexGrow: 1 }}
                     />
 
-                    <Stack spacing={1} direction="row">
+                    <Stack direction="row" spacing={1} flexShrink={0}>
                       <Button
                         variant="outlined"
                         size="small"

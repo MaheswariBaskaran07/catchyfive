@@ -17,6 +17,7 @@ import SearchResults from './pages/SearchResults';
 import CheckoutPage from './pages/CheckoutPage';
 import SaveAddress from './components/SaveAddress';
 import DeliveryInfo from './pages/DeliveryInfo';
+import ForgotPassword from './pages/ForgotPassword';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
         <Route path="/save-address" element={<SaveAddress />} />
         <Route path="/add-address/:id" element={<AddAddress />} />
         <Route path="/delivery-info" element={<DeliveryInfo />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       </CartProvider>
