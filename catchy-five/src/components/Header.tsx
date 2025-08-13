@@ -34,6 +34,14 @@ import {
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartContext } from './CartContext';
+import {
+  Info,
+  Settings,
+  
+} from '@mui/icons-material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { Home } from '@mui/icons-material';
+
 
 export default function Header() {
   const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
@@ -82,6 +90,8 @@ export default function Header() {
       cart: '/cartpage',
       wishlist: '/wishlistpage',
       'add address': '/add-address',
+       checkout: '/checkout',         
+  setting: '/settings',  
     };
 
     const categories = ['vegetables', 'fruits', 'groceries', 'beverages'];
@@ -99,59 +109,84 @@ export default function Header() {
 
   const handleLogout = () => {
     setAnchorElAccount(null);
-    console.log('Logged out'); // Replace with actual logout logic
+    console.log('Logged out'); 
     navigate('/');
   };
 
-  const drawerList = (
-    <Box sx={{ width: 250 }}>
-      <List>
-        <ListItemButton onClick={() => { navigate('/'); setDrawerOpen(false); }}>
-          <ListItemText primary="Home" />
-        </ListItemButton>
+  
+const drawerList = (
+  <Box sx={{ width: 250 }}>
+    <List>
+      <ListItemButton onClick={() => { navigate('/'); setDrawerOpen(false); }}>
+        <Home sx={{ color: '#4CAF50', mr: 1 }} />
+        <ListItemText primary="Home" />
+      </ListItemButton>
 
-        <ListItemButton onClick={() => setOpenCategories(!openCategories)}>
-          <ListItemText primary="Categories" />
-          {openCategories ? <ExpandLess /> : <ExpandMore />}
-        </ListItemButton>
+      <ListItemButton onClick={() => setOpenCategories(!openCategories)}>
+        <Category sx={{ color: '#4CAF50', mr: 1 }} />
+        <ListItemText primary="Categories" />
+        {openCategories ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
 
-        <Collapse in={openCategories} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {['Vegetables', 'Fruits', 'Groceries', 'Beverages'].map((item) => (
-              <ListItemButton
-                key={item}
-                sx={{ pl: 4 }}
-                onClick={() => {
-                  navigate(`/category/${item.toLowerCase()}`);
-                  setDrawerOpen(false);
-                }}
-              >
-                <ListItemText primary={item} />
-              </ListItemButton>
-            ))}
-          </List>
-        </Collapse>
+      <Collapse in={openCategories} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {[
+            { label: 'Vegetables', icon: '🥦' },
+            { label: 'Fruits', icon: '🍎' },
+            { label: 'Groceries', icon: <ShoppingCartIcon sx={{ color: '#0cb906ff', mr: 1 }} /> },
+            { label: 'Beverages', icon: '🥤' },
+          ].map(({ label, icon }) => (
+            <ListItemButton
+              key={label}
+              sx={{ pl: 4 }}
+              onClick={() => {
+                navigate(`/category/${label.toLowerCase()}`);
+                setDrawerOpen(false);
+              }}
+            >
+              {typeof icon === 'string' ? (
+                <Box component="span" sx={{ mr: 1 }}>{icon}</Box>
+              ) : icon}
+              <ListItemText primary={label} />
+            </ListItemButton>
+          ))}
+        </List>
+      </Collapse>
 
-        <ListItemButton onClick={() => { navigate('/offers'); setDrawerOpen(false); }}>
-          <ListItemText primary="Offers" />
-        </ListItemButton>
+      <ListItemButton onClick={() => { navigate('/offers'); setDrawerOpen(false); }}>
+        <ExploreIcon sx={{ color: '#1976d2', mr: 1 }} />
+        <ListItemText primary="Offers" />
+      </ListItemButton>
 
-        <ListItemButton onClick={() => { navigate('/contact'); setDrawerOpen(false); }}>
-          <ListItemText primary="Contact" />
-        </ListItemButton>
+      <ListItemButton onClick={() => { navigate('/contact'); setDrawerOpen(false); }}>
+        <AccountCircle sx={{ color: '#1976d2', mr: 1 }} />
+        <ListItemText primary="Contact" />
+      </ListItemButton>
 
-        <ListItemButton onClick={() => { navigate('/about'); setDrawerOpen(false); }}>
-          <ListItemText primary="About" />
-        </ListItemButton>
+      <ListItemButton onClick={() => { navigate('/about'); setDrawerOpen(false); }}>
+        <Info sx={{ color: '#1976d2', mr: 1 }} />
+        <ListItemText primary="About" />
+      </ListItemButton>
 
-        <ListItemButton onClick={() => { navigate('/add-address'); setDrawerOpen(false); }}>
-          <ListItemText primary="Add Delivery Address" />
-        </ListItemButton>
-      </List>
-    </Box>
-  );
+      <ListItemButton onClick={() => { navigate('/add-address'); setDrawerOpen(false); }}>
+        <LocalShipping sx={{ color: '#388e3c', mr: 1 }} />
+        <ListItemText primary="Add Delivery Address" />
+      </ListItemButton>
 
-  return (
+      <ListItemButton onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
+        <Settings sx={{ color: '#1976d2', mr: 1 }} />
+        <ListItemText primary="Settings" />
+      </ListItemButton>
+
+      <ListItemButton onClick={() => { navigate('/checkout'); setDrawerOpen(false); }}>
+        <ShoppingCart sx={{ color: '#1976d2', mr: 1 }} />
+        <ListItemText primary="Checkout" />
+      </ListItemButton>
+    </List>
+  </Box>
+);
+
+    return (
     <Box>
       {/* Top Banner */}
       <Box sx={{
@@ -192,24 +227,34 @@ export default function Header() {
                   </IconButton>
                 </Tooltip>
                 <Menu anchorEl={anchorElAccount} open={Boolean(anchorElAccount)} onClose={() => setAnchorElAccount(null)}>
-                  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/login'); }}>Login</MenuItem>
-                  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/signup'); }}>Signup</MenuItem>
-                  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/add-address'); }}>Add Address</MenuItem>
-                  <MenuItem onClick={handleLogout}>
-                    Logout
-                    <Logout sx={{ ml: 1, fontSize: '1.2rem', color: '#d32f2f' }} />
-                  </MenuItem>
-                </Menu>
+  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/login'); }}>
+    <AccountCircle sx={{ mr: 1, color: '#388e3c' }} /> Login
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/signup'); }}>
+    <AccountCircle sx={{ mr: 1, color: '#388e3c' }} /> Signup
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/add-address'); }}>
+    <LocalShipping sx={{ mr: 1, color: '#388e3c' }} /> Add Address
+  </MenuItem>
+  <MenuItem onClick={handleLogout}>
+    <Logout sx={{ mr: 1, color: '#d32f2f' }} /> Logout
+  </MenuItem>
+</Menu>
 
                 <Tooltip title="Delivery Info">
                   <IconButton onClick={(e) => setAnchorElDelivery(e.currentTarget)}>
                     <LocalShipping sx={{ color: '#2e7d32' }} />
                   </IconButton>
                 </Tooltip>
+                
                 <Menu anchorEl={anchorElDelivery} open={Boolean(anchorElDelivery)} onClose={() => setAnchorElDelivery(null)}>
-                  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/delivery-info'); }}>Delivery Info</MenuItem>
-                  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/save-address'); }}>Save Address</MenuItem>
-                </Menu>
+  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/delivery-info'); }}>
+    <LocalShipping sx={{ mr: 1, color: '#1215d4ff' }} /> Delivery Info
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/save-address'); }}>
+    <Favorite sx={{ mr: 1, color: '#1825e0ff' }} /> Save Address
+  </MenuItem>
+</Menu>
               </Box>
             </Toolbar>
 
@@ -251,11 +296,23 @@ export default function Header() {
               <Button onClick={(e) => setAnchorElCategory(e.currentTarget)} startIcon={<Category />} endIcon={<ExpandMore />} sx={navStyle}>
                 Categories
               </Button>
-              <Menu anchorEl={anchorElCategory} open={Boolean(anchorElCategory)} onClose={() => setAnchorElCategory(null)}>
-                {['Vegetables', 'Fruits', 'Groceries', 'Beverages'].map((item) => (
-                  <MenuItem key={item} onClick={() => { setAnchorElCategory(null); navigate(`/category/${item.toLowerCase()}`); }}>{item}</MenuItem>
-                ))}
-              </Menu>
+            <Menu anchorEl={anchorElCategory} open={Boolean(anchorElCategory)} onClose={() => setAnchorElCategory(null)}>
+  <MenuItem onClick={() => { setAnchorElCategory(null); navigate('/category/vegetables'); }}>
+    🥦 <span style={{ color: '#1238e0ff', marginLeft: 8 }}>Vegetables</span>
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElCategory(null); navigate('/category/fruits'); }}>
+    🍎 <span style={{ color: '#1238e0ff', marginLeft: 8 }}>Fruits</span>
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElCategory(null); navigate('/category/groceries'); }}>
+  <ShoppingCartIcon sx={{ color: '#0cb906ff', mr: 1 }} />
+  <span style={{ color: '#1238e0ff' }}>Groceries</span>
+</MenuItem>
+  <MenuItem onClick={() => { setAnchorElCategory(null); navigate('/category/beverages'); }}>
+    🥤 <span style={{ color: '#1238e0ff', marginLeft: 8 }}>Beverages</span>
+  </MenuItem>
+</Menu>
+
+
             </Box>
 
             <Box component="form" onSubmit={handleSearchSubmit} sx={{ ...searchBoxStyle, maxWidth: 500 }}>
@@ -273,11 +330,25 @@ export default function Header() {
                 <ExploreIcon sx={{ mr: 0.5, fontSize: '1.2rem' }} />
                 Explore
               </Button>
-              <Menu anchorEl={anchorElPages} open={Boolean(anchorElPages)} onClose={() => setAnchorElPages(null)}>
-                {['Offers', 'Contact', 'About'].map((page) => (
-                  <MenuItem key={page} onClick={() => { setAnchorElPages(null); navigate(`/${page.toLowerCase()}`); }}>{page}</MenuItem>
-                ))}
-              </Menu>
+             <Menu anchorEl={anchorElPages} open={Boolean(anchorElPages)} onClose={() => setAnchorElPages(null)}>
+  <MenuItem onClick={() => { setAnchorElPages(null); navigate('/offers'); }}>
+    <ExploreIcon sx={{ mr: 1, color: '#1976d2' }} /> Offers
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElPages(null); navigate('/contact'); }}>
+    <AccountCircle sx={{ mr: 1, color: '#1976d2' }} /> Contact
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElPages(null); navigate('/about'); }}>
+    <Info sx={{ mr: 1, color: '#1976d2' }} /> About
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElPages(null); navigate('/checkout'); }}>
+    <ShoppingCart sx={{ mr: 1, color: '#1976d2' }} /> Checkout
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElPages(null); navigate('/settings'); }}>
+    <Settings sx={{ mr: 1, color: '#1976d2' }} /> Setting
+  </MenuItem>
+</Menu>
+
+
 
               <Tooltip title="Wishlist">
                 <IconButton onClick={() => navigate('/wishlistpage')}>
@@ -300,25 +371,38 @@ export default function Header() {
                   <AccountCircle sx={{ color: '#388e3c' }} />
                 </IconButton>
               </Tooltip>
-              <Menu anchorEl={anchorElAccount} open={Boolean(anchorElAccount)} onClose={() => setAnchorElAccount(null)}>
-                <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/login'); }}>Login</MenuItem>
-                <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/signup'); }}>Signup</MenuItem>
-                <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/add-address'); }}>Add Address</MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  Logout
-                  <Logout sx={{ ml: 1, fontSize: '1.2rem', color: '#d32f2f' }} />
-                </MenuItem>
-              </Menu>
+             <Menu anchorEl={anchorElAccount} open={Boolean(anchorElAccount)} onClose={() => setAnchorElAccount(null)}>
+  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/login'); }}>
+    <AccountCircle sx={{ mr: 1, color: '#388e3c' }} /> Login
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/signup'); }}>
+    <AccountCircle sx={{ mr: 1, color: '#388e3c' }} /> Signup
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElAccount(null); navigate('/add-address'); }}>
+    <LocalShipping sx={{ mr: 1, color: '#388e3c' }} /> Add Address
+  </MenuItem>
+  <MenuItem onClick={handleLogout}>
+    <Logout sx={{ mr: 1, color: '#d32f2f' }} /> Logout
+  </MenuItem>
+</Menu>
+
+
 
               <Tooltip title="Delivery Info">
                 <IconButton onClick={(e) => setAnchorElDelivery(e.currentTarget)}>
                   <LocalShipping sx={{ color: '#2e7d32' }} />
                 </IconButton>
               </Tooltip>
-              <Menu anchorEl={anchorElDelivery} open={Boolean(anchorElDelivery)} onClose={() => setAnchorElDelivery(null)}>
-                <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/delivery-info'); }}>Delivery Info</MenuItem>
-                <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/save-address'); }}>Save Address</MenuItem>
-              </Menu>
+            <Menu anchorEl={anchorElDelivery} open={Boolean(anchorElDelivery)} onClose={() => setAnchorElDelivery(null)}>
+  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/delivery-info'); }}>
+    <LocalShipping sx={{ mr: 1, color: '#1215d4ff' }} /> Delivery Info
+  </MenuItem>
+  <MenuItem onClick={() => { setAnchorElDelivery(null); navigate('/save-address'); }}>
+    <Favorite sx={{ mr: 1, color: '#1825e0ff' }} /> Save Address
+  </MenuItem>
+</Menu>
+
+
             </Box>
           </Toolbar>
         )}

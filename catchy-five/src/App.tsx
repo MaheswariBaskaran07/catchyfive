@@ -18,7 +18,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import SaveAddress from './components/SaveAddress';
 import DeliveryInfo from './pages/DeliveryInfo';
 import ForgotPassword from './pages/ForgotPassword';
-
+import SettingsPage from './components/SettingsPage';
 
 function App() {
   return (
@@ -43,6 +43,7 @@ function App() {
         <Route path="/add-address/:id" element={<AddAddress />} />
         <Route path="/delivery-info" element={<DeliveryInfo />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       </CartProvider>

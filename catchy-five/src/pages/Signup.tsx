@@ -7,8 +7,23 @@ export default function Signup() {
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
 
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // ✅ Save user data to localStorage
+    const userData = {
+      name,
+      email,
+      phone,
+    };
+    localStorage.setItem('userProfile', JSON.stringify(userData));
+
     setSuccess(true);
     setTimeout(() => navigate('/login'), 2000);
   };
@@ -29,35 +44,36 @@ export default function Signup() {
     >
       {/* 🌿 Top Left Decorative Image */}
       <Box
-  component="img"
-  src="/leaf.jpg"
-  alt="Leaf Decoration"
-  sx={{
-    position: 'absolute',
-    top: { xs: 10, sm: 30 },
-    left: { xs: 10, sm: 30 },
-    width: { xs: 200, sm: 200 },
-    opacity: 0.9,
-    zIndex: 0,
-    margin:10,
-  }}
-/>
+        component="img"
+        src="/leaf.jpg"
+        alt="Leaf Decoration"
+        sx={{
+          position: 'absolute',
+          top: { xs: 10, sm: 30 },
+          left: { xs: 10, sm: 30 },
+          width: { xs: 200, sm: 200 },
+          opacity: 0.9,
+          zIndex: 0,
+          margin: 10,
+        }}
+      />
 
       {/* 🧺 Bottom Right Decorative Image */}
       <Box
-  component="img"
-  src="/basket.jpg"
-  alt="Basket Decoration"
-  sx={{
-    position: 'absolute',
-    bottom: { xs: 10, sm: 30 },
-    right: { xs: 10, sm: 30 },
-    width: { xs: 200, sm: 200 },
-    opacity: 0.9,
-    zIndex: 0,
-    margin: 10,
-  }}
-/>
+        component="img"
+        src="/basket.jpg"
+        alt="Basket Decoration"
+        sx={{
+          position: 'absolute',
+          bottom: { xs: 10, sm: 30 },
+          right: { xs: 10, sm: 30 },
+          width: { xs: 200, sm: 200 },
+          opacity: 0.9,
+          zIndex: 0,
+          margin: 10,
+        }}
+      />
+
       {/* 📝 Signup Form */}
       <Box
         width="100%"
@@ -103,6 +119,8 @@ export default function Signup() {
               label="Full Name"
               required
               fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -115,6 +133,8 @@ export default function Signup() {
               label="Phone Number"
               required
               fullWidth
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -128,6 +148,8 @@ export default function Signup() {
               type="email"
               required
               fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -141,6 +163,8 @@ export default function Signup() {
               type="password"
               required
               fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
