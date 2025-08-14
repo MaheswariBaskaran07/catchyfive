@@ -1,8 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardMedia,
   CardContent,
@@ -13,20 +12,33 @@ import {
   TextField,
   Snackbar,
   Alert,
+  Slide,
+  Tooltip,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useCartContext } from '../components/CartContext';
 import { useState, useEffect } from 'react';
 
+
+const categoryIcons: { [key: string]: string } = {
+  vegetables: '🥕',
+  fruits: '🍎',
+  groceries: '🧺',
+  beverages: '🥤',
+};
+
 export default function CategoryPage() {
   const { categoryName } = useParams();
+  const navigate = useNavigate();
   const { addToCart, addToWishlist } = useCartContext();
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarText, setSnackbarText] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'info' | 'warning'>('success');
 
   const categoryKey = categoryName?.toLowerCase() || '';
+  const categories = ['vegetables', 'fruits', 'groceries', 'beverages'];
 
   const mockData = {
     vegetables: [
@@ -56,14 +68,12 @@ export default function CategoryPage() {
   };
 
   const products = mockData[categoryKey as keyof typeof mockData] || [];
-
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
 
-  // ✅ Initialize quantities to 1 when products load
   useEffect(() => {
     const initialQuantities: { [id: string]: number } = {};
     products.forEach((item) => {
-      initialQuantities[item.id] = 1;
+      initialQuantities[item.id] = 0;
     });
     setQuantities(initialQuantities);
   }, [categoryKey]);
@@ -100,11 +110,40 @@ export default function CategoryPage() {
 
   const handleQuantityChange = (id: string, value: string) => {
     const parsed = parseInt(value, 10);
-    setQuantities((prev) => ({ ...prev, [id]: isNaN(parsed) ? 0 : parsed }));
+    setQuantities((prev) => ({ ...prev, [id]: isNaN(parsed) || parsed < 0 ? 0 : parsed }));
   };
 
   return (
     <Box sx={{ px: { xs: 2, sm: 3, md: 5 }, py: 4 }}>
+      {/* Category Buttons */}
+      <Box className="d-flex flex-wrap justify-content-center gap-2 mb-4">
+        {categories
+          .filter((cat) => cat !== categoryKey)
+          .map((cat, index) => (
+            <Slide key={cat} direction="left" in mountOnEnter timeout={400 + index * 200}>
+              <Button
+                variant="outlined"
+                onClick={() => navigate(`/category/${cat}`)}
+                sx={{
+                  textTransform: 'capitalize',
+                  fontWeight: 'bold',
+                  px: 2,
+                  borderColor: '#4CAF50',
+                  color: '#4CAF50',
+                  '&:hover': {
+                    backgroundColor: '#e8f5e9',
+                    borderColor: '#388e3c',
+                    color: '#388e3c',
+                  },
+                }}
+                startIcon={<span>{categoryIcons[cat]}</span>}
+              >
+                {cat}
+              </Button>
+            </Slide>
+          ))}
+      </Box>
+
       <Typography
         variant="h4"
         sx={{ mb: 4, textTransform: 'capitalize', color: '#4CAF50', textAlign: 'center', fontWeight: 'bold' }}
@@ -117,14 +156,14 @@ export default function CategoryPage() {
           No products found for this category.
         </Typography>
       ) : (
-        <Grid container spacing={4}>
+        <div className="row gy-4">
           {products.map((item) => {
             const discount = item.originalPrice
               ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)
               : 0;
 
             return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={item.id}>
                 <Card
                   sx={{
                     height: '100%',
@@ -133,8 +172,6 @@ export default function CategoryPage() {
                     borderRadius: 2,
                     overflow: 'hidden',
                     boxShadow: 3,
-                    transition: 'transform 0.3s ease',
-                    '&:hover': { transform: 'translateY(-5px)' },
                   }}
                 >
                   <CardMedia component="img" image={item.image} alt={item.name} sx={{ height: 180, objectFit: 'cover' }} />
@@ -177,53 +214,121 @@ export default function CategoryPage() {
                     </Box>
                   </CardContent>
 
+                  {/* Quantity control with increment/decrement buttons */}
                   <CardActions
-                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, pb: 2, mt: 'auto' }}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      px: 2,
+                      pb: 2,
+                      mt: 'auto',
+                    }}
                   >
-                    <TextField
-                      type="number"
-                      size="small"
-                      value={quantities[item.id] || 0}
-                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                      inputProps={{ min: 0, style: { textAlign: 'center', width: 40, padding: 6 } }}
-                      sx={{ width: 60 }}
-                    />
-                    <Button
-                      variant="contained"
-                      startIcon={<ShoppingCartIcon />}
-                      onClick={() => handleAddToCart(item)}
+                    <Box
                       sx={{
-                        backgroundColor: '#4CAF50',
-                        color: '#fff',
-                        textTransform: 'none',
-                        fontWeight: 'bold',
-                        px: 2,
-                        '&:hover': {
-                          backgroundColor: '#388e3c',
-                        },
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
-                    <IconButton
-                      onClick={() => handleAddToWishlist(item)}
-                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
                         border: '1px solid #ccc',
-                        color: '#555',
-                        '&:hover': {
-                          backgroundColor: '#ffe6e6',
-                          color: '#d32f2f',
-                        },
+                        borderRadius: 1,
+                        overflow: 'hidden',
+                        width: 110,
+                        height: 36,
                       }}
                     >
-                      <FavoriteBorderIcon />
-                    </IconButton>
+                      <Button
+                        onClick={() => {
+                          const current = quantities[item.id] || 0;
+                          if (current > 0) {
+                            handleQuantityChange(item.id, String(current - 1));
+                          }
+                        }}
+                        sx={{
+                          minWidth: 0,
+                          px: 1,
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                          userSelect: 'none',
+                        }}
+                      >
+                        −
+                      </Button>
+                      <TextField
+                        type="number"
+                        size="small"
+                        value={quantities[item.id] || 0}
+                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                        inputProps={{
+                          min: 0,
+                          style: { textAlign: 'center', padding: '6px 8px', width: 40 },
+                        }}
+                        sx={{
+                          '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                            display: 'none',
+                          },
+                          '& input[type=number]': {
+                            MozAppearance: 'textfield',
+                          },
+                        }}
+                      />
+                      <Button
+                        onClick={() => {
+                          const current = quantities[item.id] || 0;
+                          handleQuantityChange(item.id, String(current + 1));
+                        }}
+                        sx={{
+                          minWidth: 0,
+                          px: 1,
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                          userSelect: 'none',
+                        }}
+                      >
+                        +
+                      </Button>
+                    </Box>
+
+                    <Tooltip title="Add to Cart" arrow>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleAddToCart(item)}
+                        sx={{
+                          backgroundColor: '#4CAF50',
+                          color: '#fff',
+                          textTransform: 'none',
+                          fontWeight: 'bold',
+                          px: 2,
+                          minWidth: 0,
+                          '&:hover': {
+                            backgroundColor: '#388e3c',
+                          },
+                        }}
+                      >
+                        <ShoppingCartIcon fontSize="small" />
+                      </Button>
+                    </Tooltip>
+
+                    <Tooltip title="Add to Wishlist" arrow>
+                      <IconButton
+                        onClick={() => handleAddToWishlist(item)}
+                        sx={{
+                          border: '1px solid #ccc',
+                          color: '#555',
+                          '&:hover': {
+                            backgroundColor: '#ffe6e6',
+                            color: '#d32f2f',
+                          },
+                        }}
+                      >
+                        <FavoriteBorderIcon />
+                      </IconButton>
+                    </Tooltip>
                   </CardActions>
                 </Card>
-              </Grid>
+              </div>
             );
           })}
-        </Grid>
+        </div>
       )}
 
       <Snackbar

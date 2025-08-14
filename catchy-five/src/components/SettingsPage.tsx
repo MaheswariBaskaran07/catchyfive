@@ -184,12 +184,12 @@ const SettingsPage: React.FC = () => {
             onClick={() => navigate('/delivery-info')}
             sx={{
               flex: '1 1 45%',
-              background: 'linear-gradient(to right, #ff9966, #ff5e62)',
+              background: 'linear-gradient(to right, #49cc16ff, #73ac09ff)',
               color: 'white',
               fontWeight: 'bold',
               textTransform: 'none',
               '&:hover': {
-                background: 'linear-gradient(to right, #ff5e62, #ff9966)',
+                background: 'linear-gradient(to right, #b6ca42ff, #499b07ff)',
               }
             }}
           >
